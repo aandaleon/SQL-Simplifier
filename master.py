@@ -173,6 +173,11 @@ So the flags the user wants are stored in:
 ###PARSING QUERY OUTPUT
 #alright so we're done querying shiz and we got a big boi list of lists
 #convert list of lists into dataframe
+data_frame = pd.DataFrame(data) #make list of lists into dataframe
+data_frame.columns = ["gene", "rsid", "varID", "ref_allele", "eff_allele", "weight", "genename", "gene_type", "alpha",
+               "n_snps_in_window", "n.snps.in.model", "lambda_min_mse", "test_R2_avg", "test_R2_sd", "cv_R2_avg",
+               "cv_R2_sd", "in_sample_R2","nested_cv_fisher_pval", "rho_avg", "rho_se", "rho_zscore", "pred.perf.R2",
+               "pred.perf.pval", "pred.perf.qval", "chromosome", "cv_seed", "n_samples", "population", "tissue"] #give column names so user knows what they're looking at
 
 #if user has flags 
   #get everything "true" the user wants
