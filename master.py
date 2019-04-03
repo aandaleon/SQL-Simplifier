@@ -1,9 +1,9 @@
 #this file can be run to take user input and pass it to the querying file
 import argparse
-import glob
 import numpy as np
 import os
 import pandas as pd
+import sys
 
 #if the python script is run without any flags, just output genenames, cv_R2_avg, rsid, and weights (most common things we use)
 parser = argparse.ArgumentParser()
@@ -11,8 +11,8 @@ parser = argparse.ArgumentParser()
 #string inputs
 #if none, query all available
 parser.add_argument("--db", type = str, action = "store", dest = "db", required = False, help = ".db you want to query.") #"db/gtex_v7_Whole_Blood_imputed_europeans_tw_0.5_signif.db"
-parser.add_argument("--genes", type = str, action = "store", dest = "genes", required = False, help = "File containing genes (Ensembl IDs).") #"practice_python_queries/genenames.txt"
-parser.add_argument("--genenames", type = str, action = "store", dest = "genenames", required = False, help = "File containing gene names.") #"practice_python_queries/genenames.txt"
+parser.add_argument("--genes", type = str, action = "store", dest = "genes", required = False, help = "File containing genes (Ensembl IDs) separated by line.") #"practice_python_queries/genenames.txt"
+parser.add_argument("--genenames", type = str, action = "store", dest = "genenames", required = False, help = "File containing gene names separated by line.") #"practice_python_queries/genenames.txt"
 
 #boolean inputs
 #EXTRA
@@ -37,14 +37,27 @@ parser.add_argument("--population", action = "store_true", dest = "population", 
 parser.add_argument("--tissue", action = "store_true", dest = "tissue", default = False, help = "Output the tissue or MESA population from which RNA was sequenced.")
 
 #THRESHOLDS (may mess around with)
-parser.add_argument("--test_R2_avg_thres", type = float, dest = "test_R2_avg_thres", default = 0, help = "Restrict the test_R2_avg to values above this threshold.")
-parser.add_argument("--cv_R2_avg_thres", type = float, dest = "cv_R2_avg_thres", default = 0, help = "Restrict the cv_R2_avg to values above this threshold.")
-parser.add_argument("--rho_avg_thres", type = float, dest = "rho_avg_thres", default = 0, help = "Restrict the rho_avg to values above this threshold.")
-parser.add_argument("--pred.perf.R2_thres", type = float, dest = "pred_perf_R2_thres", default = 0, help = "Restrict the test_R2_avg to values above this threshold.")
-parser.add_argument("--pred.perf.pval_thres", type = float, dest = "pred_perf_pval_thres", default = 0, help = "Restrict the pred_perf_pval to values below this threshold.")
+parser.add_argument("--test_R2_avg_thres", type = float, dest = "test_R2_avg_thres", default = 0, help = "Restrict the test_R2_avg to values above this threshold. Default = 0.")
+parser.add_argument("--cv_R2_avg_thres", type = float, dest = "cv_R2_avg_thres", default = 0, help = "Restrict the cv_R2_avg to values above this threshold. Default = 0.")
+parser.add_argument("--rho_avg_thres", type = float, dest = "rho_avg_thres", default = 0, help = "Restrict the rho_avg to values above this threshold. Default = 0.")
+parser.add_argument("--pred.perf.R2_thres", type = float, dest = "pred_perf_R2_thres", default = 0, help = "Restrict the test_R2_avg to values above this threshold. Default = 0.")
+parser.add_argument("--pred.perf.pval_thres", type = float, dest = "pred_perf_pval_thres", default = 1, help = "Restrict the pred_perf_pval to values below this threshold. Default = 1.")
 
 args = parser.parse_args() #then pass these arguments to further things
 
+###INPUT SANITATION
+if args.db is None:
+    print("No .db destination detected. Please input a .db destination using the --db flag.")
+    sys.exit(1)
+###GENES, GENENAMES
+if args.genes is None and args.genenames is None:
+    print("No list of genes has been supplied with --genes or --genenames. All genes in the model(s) will be queried.")
+elif args.genes is not None and args.genenames is not None:
+    print("Please select an input for only genes or only genenames and not both.")
+elif args.genes is not None:
+    query_genes = list(np.loadtxt(args.genes, dtype = "str", ndmin = 1))
+else:# args.genenames is not None:
+    query_genes = list(np.loadtxt(args.genenames, dtype = "str", ndmin = 1))
 
 ###EXTRA
 extra_flags = [] #store the flags the user passes
@@ -62,7 +75,7 @@ if args.pred_perf_R2:
     extra_flags.append("pred.perf.R2")
 if args.pred_perf_pval:
     extra_flags.append("pred.perf.pval")
-print(extra_flags)
+#print(extra_flags)
   
 ###WEIGHTS
 weights_query = False #default to not query weights
@@ -79,7 +92,7 @@ if args.eff_allele:
     weights_flags.append("eff_allele")
 if args.weight:
     weights_flags.append("weight")
-print(weights_flags)
+#print(weights_flags)
 
 ###SAMPLE INFO
 sample_info_flags = []
@@ -89,14 +102,17 @@ if args.population:
     sample_info_flags.append("population")
 if args.tissue:
     sample_info_flags.append("tissue")
-print(sample_info_flags)
+#print(sample_info_flags)
 
-if len(extra_flags) + len(weights_flags) + len(sample_info_flags) == 0:
-    print("The user has passed no flags. Do a thing.")
+query_flags = extra_flags + weights_flags + sample_info_flags
+if len(query_flags) == 0:
+    print("The user has passed no query flags. Do a thing.")
+print("Flags queried: " + ", ".join(query_flags))
 
 args_db = args.db #.endswith doesn't like arguments
 if args_db.endswith(".db"): #its a single .db file
-    dbs = list(args.db)
+    dbs = [(args_db)]
+    print("Model queried: " + args_db.split("/")[-1]) #don't print the full path
 else: #its (I assume) a folder
     if args_db.endswith("/"):
         folder_name = args_db
@@ -106,17 +122,28 @@ else: #its (I assume) a folder
     for file in os.listdir(folder_name): #find files in a folder - https://stackoverflow.com/questions/3964681/find-all-files-in-a-directory-with-extension-txt-in-python
         if file.endswith(".db"):
             dbs.append(folder_name + file)
-    print(dbs)
+    if len(dbs) == 0:
+        print("No .db models were found in the input destination. Program exiting.")
+        sys.exit(1)
+    print("Models queried: " + ", ".join([_.replace(folder_name, "") for _ in dbs])) #no need to print the folder name multiple times
+print(dbs)
     
+test_R2_avg_thres = args.test_R2_avg_thres
+cv_R2_avg_thres = args.cv_R2_avg_thres
+rho_avg_thres = args.rho_avg_thres
+pred_perf_R2_thres = args.pred_perf_R2_thres
+pred_perf_pval_thres = args.pred_perf_pval_thres
 
 '''
 So the flags the user wants are stored in:
     extra
     weights
     sample info
+    
+    Thresholds are their own variables (see 123-127)
 '''
 
-
+print("\n\n\n\n\n\n") #space between what I'm (Angela) doing and downstream shiz
 
 
 
