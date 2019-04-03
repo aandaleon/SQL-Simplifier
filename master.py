@@ -174,7 +174,8 @@ So the flags the user wants are stored in:
 #alright so we're done querying shiz and we got a big boi list of lists
 #convert list of lists into dataframe
 data_frame = pd.DataFrame(data) #make list of lists into dataframe
-data_frame.columns = ["gene", "rsid", "varID", "ref_allele", "eff_allele", "weight", "genename", "gene_type", "alpha",
+data_frame.index = ["gene"]
+data_frame.columns = ["rsid", "varID", "ref_allele", "eff_allele", "weight", "genename", "gene_type", "alpha",
                "n_snps_in_window", "n.snps.in.model", "lambda_min_mse", "test_R2_avg", "test_R2_sd", "cv_R2_avg",
                "cv_R2_sd", "in_sample_R2","nested_cv_fisher_pval", "rho_avg", "rho_se", "rho_zscore", "pred.perf.R2",
                "pred.perf.pval", "pred.perf.qval", "chromosome", "cv_seed", "n_samples", "population", "tissue"] #give column names so user knows what they're looking at
@@ -183,13 +184,25 @@ data_frame.columns = ["gene", "rsid", "varID", "ref_allele", "eff_allele", "weig
   #get everything "true" the user wants
     #always include genename
     #ex. if they want cv_r2_avg, rho_avg, and rsid, make a list of ["genename", "cv_r2_avg", "rho_avg", "rsid"]
-    
 #if user has no flags
   #genename, cv_r2_avg, rs, and weights
 #give column names
   #(this will all be in the same order so we just need to figure out what this order is)
 #only pull columns of what the user wants
 
+user_specified_flags = []
+num_of_flags = len(extra_flags) + len(weights_flags) + len(sample_info_flags)
+for flag in extra_flags:
+    user_specified_flags.append(flag)
+for flag in weights_flags:
+    user_specified_flags.append(flag)
+for flag in sample_info_flags:
+    user_specified_flags.append(flag)
+if num_of_flags > 0:
+    data_frame_mod = data_frame.loc[user_specified_flags]
+else:
+    data_frame_mod = data_frame.loc["genename", "cv_r2_avg", "rsid", "weights"]
+    
 #restrict to thresholds the user wants (see threshold flags)
   #ex. if only want cv_r2_avg > 0.1, only keep those
    #(this will involve using a bunch of .loc)
