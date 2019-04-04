@@ -200,6 +200,9 @@ print("\n\n\n\n\n\n") #space between what I'm (Angela) doing and downstream shiz
 ###PARSING QUERY OUTPUT
 #alright so we're done querying shiz and we got a big boi list of lists
 #convert list of lists into dataframe
+
+#Don't we need to take in the genes that the user wants to query? Once we do that, I would add a line of code to the flag retrieving
+#code to only keep the rows with those genes, correct?
 data_frame = pd.DataFrame(data) #make list of lists into dataframe
 data_frame.index = ["gene"]
 data_frame.columns = ["rsid", "varID", "ref_allele", "eff_allele", "weight", "genename", "gene_type", "alpha",
