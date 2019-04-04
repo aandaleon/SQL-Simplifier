@@ -46,6 +46,7 @@ parser.add_argument("--pred.perf.pval_thres", type = float, dest = "pred_perf_pv
 args = parser.parse_args() #then pass these arguments to further things
 
 ###INPUT SANITATION
+#List of dbs holds addresses to .db files user wants to query
 if args.db is None:
     print("No .db destination detected. Please input a .db destination using the --db flag.")
     sys.exit(1)
