@@ -71,5 +71,5 @@ This program and documentation were created by BS and MS [Bioinformatics](https:
 ## References
 
 * Gamazon ER‡, Wheeler HE‡, Shah KP‡, Mozaffari SV, Aquino-Michaels K, Carroll RJ, Eyler AE, Denny JC, GTEx Consortium, Nicolae DL, Cox NJ, Im HK. (2015) [A gene-based association method for mapping traits using reference transcriptome data.](https://www.nature.com/articles/ng.3367) Nature Genetics 47(9):1091-8. ‡Contributed equally.
-* GTEx Consortium. [The Genotype-Tissue Expression (GTEx) project.](https://www.nature.com/articles/ng.2653) Nature Genetics 45, 580–585 (2013).
+* GTEx Consortium. (2013) [The Genotype-Tissue Expression (GTEx) project.](https://www.nature.com/articles/ng.2653) Nature Genetics 45, 580–585.
 * Mogil LS, Andaleon A, Badalamenti A, Dickinson SP, Guo X, Rotter JI, Johnson WC, Im HK, Liu Y, Wheeler HE. (2018) [Genetic architecture of gene expression traits across diverse populations.](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1007586) PLOS Genetics 14(8):e1007586.
