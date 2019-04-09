@@ -101,6 +101,20 @@ if args.weight:
     weights_flags.append("weight")
 #print(weights_flags)
 
+###STORING WEIGHTS (Shreya)
+query_weight_vals = []
+if args.test_R2_avg_thres:
+    query_weight_vals.append("test_R2_avg_thres")
+if args.cv_R2_avg_thres:
+    query_weight_vals.append("cv_R2_avg_thres")
+if args.rho_avg_thres:
+    query_weight_vals.append("rho_avg_thres")
+if args.pred.perf.R2_thres:
+    query_weight_vals.append("pred_perf_R2_thres")
+if args.pred.perf.pval_thres:
+    query_weight_vals.append("pred_perf_pval_thres")
+ 
+
 ###SAMPLE INFO
 sample_info_flags = []
 if args.n_samples:
