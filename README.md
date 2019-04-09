@@ -56,7 +56,7 @@ Open a terminal session and enter: `git clone https://github.com/aandaleon/SQLit
   * `--pred.perf.R2_thres` (default = 0): Restrict the test_R2_avg to values above this threshold.
   * `--pred.perf.pval_thres` (default = 1): Restrict the pred_perf_pval to values below this threshold.
 
-When the program is run without any parameters or gene lists, it will query every gene in a model and output `cv_R2_avg`, `rsid`, and `weight`, the most common metric utilized by the Wheeler lab.
+When the program is run without any parameters or gene lists, it will query every gene in a model and output `cv_R2_avg`, `rsid`, and `weight`, the most common metrics utilized by the Wheeler lab.
 
 ## Project summaries
 * [Project prompt](https://docs.google.com/presentation/d/1Xarn0oowpogUH9NmHpkTC-sKIEeIR__ac2_Azgp5Ilo/edit?usp=sharing)
