@@ -42,7 +42,8 @@ parser.add_argument("--cv_R2_avg_thres", type = float, dest = "cv_R2_avg_thres",
 parser.add_argument("--rho_avg_thres", type = float, dest = "rho_avg_thres", default = 0, help = "Restrict the rho_avg to values above this threshold. Default = 0.")
 parser.add_argument("--pred.perf.R2_thres", type = float, dest = "pred_perf_R2_thres", default = 0, help = "Restrict the test_R2_avg to values above this threshold. Default = 0.")
 parser.add_argument("--pred.perf.pval_thres", type = float, dest = "pred_perf_pval_thres", default = 1, help = "Restrict the pred_perf_pval to values below this threshold. Default = 1.")
-
+#CHROMOSOME NUMBER
+parser.add_argument("--chromosome", type = float, dest = "chromosome", default = 0, help = "Specifies chromosome being analyzed. Default = 0.")
 args = parser.parse_args() #then pass these arguments to further things
 
 ###INPUT SANITATION
@@ -101,19 +102,8 @@ if args.weight:
     weights_flags.append("weight")
 #print(weights_flags)
 
-###STORING WEIGHTS (-Shreya)
-query_weight_vals = []
-if args.test_R2_avg_thres:
-    query_weight_vals.append("test_R2_avg_thres")
-if args.cv_R2_avg_thres:
-    query_weight_vals.append("cv_R2_avg_thres")
-if args.rho_avg_thres:
-    query_weight_vals.append("rho_avg_thres")
-if args.pred.perf.R2_thres:
-    query_weight_vals.append("pred_perf_R2_thres")
-if args.pred.perf.pval_thres:
-    query_weight_vals.append("pred_perf_pval_thres")
- 
+query_thres_vals = []
+
 
 ###SAMPLE INFO
 sample_info_flags = []
@@ -155,7 +145,7 @@ cv_R2_avg_thres = args.cv_R2_avg_thres
 rho_avg_thres = args.rho_avg_thres
 pred_perf_R2_thres = args.pred_perf_R2_thres
 pred_perf_pval_thres = args.pred_perf_pval_thres
-
+query_thres_vals = [test_R2_avg_thres, cv_R2_avg_thres, rho_avg_thres, pred_perf_R2_thres,pred_perf_pval_thres,pred_perf_pval_thres]
 '''
 So the flags the user wants are stored in:
     extra
