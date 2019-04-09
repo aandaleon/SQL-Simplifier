@@ -43,6 +43,9 @@ parser.add_argument("--rho_avg_thres", type = float, dest = "rho_avg_thres", def
 parser.add_argument("--pred.perf.R2_thres", type = float, dest = "pred_perf_R2_thres", default = 0, help = "Restrict the test_R2_avg to values above this threshold. Default = 0.")
 parser.add_argument("--pred.perf.pval_thres", type = float, dest = "pred_perf_pval_thres", default = 1, help = "Restrict the pred_perf_pval to values below this threshold. Default = 1.")
 
+#CHROMOSOME INFO
+parser.add_argument("--chromosome", type = int, dest = "chromosome", default = 0, help = "Specifies chromosome being analyzed. Default = 0.")
+
 args = parser.parse_args() #then pass these arguments to further things
 
 ###INPUT SANITATION
