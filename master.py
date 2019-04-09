@@ -47,18 +47,24 @@ args = parser.parse_args() #then pass these arguments to further things
 
 ###INPUT SANITATION
 #List of dbs holds addresses to .db files user wants to query
+geneNames = ''
+#Note: geneNames variable created and edited by Carlee 
+
 if args.db is None:
     print("No .db destination detected. Please input a .db destination using the --db flag.")
     sys.exit(1)
 ###GENES, GENENAMES
 if args.genes is None and args.genenames is None:
     print("No list of genes has been supplied with --genes or --genenames. All genes in the model(s) will be queried.")
+    geneNames = "empty"
 elif args.genes is not None and args.genenames is not None:
     print("Please select an input for only genes or only genenames and not both.")
 elif args.genes is not None:
     query_genes = list(np.loadtxt(args.genes, dtype = "str", ndmin = 1))
+    geneNames = "false"
 else:# args.genenames is not None:
     query_genes = list(np.loadtxt(args.genenames, dtype = "str", ndmin = 1))
+    geneNames = "true"
 
 ###EXTRA
 extra_flags = [] #store the flags the user passes
@@ -146,53 +152,117 @@ So the flags the user wants are stored in:
 
 print("\n\n\n\n\n\n") #space between what I'm (Angela) doing and downstream shiz
 
-
-
 ########
 #CARLEE#
 ########
 
-###QUERYING 
-#NOTE: we'll just query EVERYTHING (aka use *) in SQL b/c I'm more comfortable parsing in pandas than in SQL
-#for db/, have the user direct to a FOLDER of db files
-  #OR have two db flags - one that iterates through a folder of .dbs and one that is for a specific .db file
-    #if ends w/ .db, it's a db (make a list of one)
-    #else find all the .dbs in that folder
-    #Folder or single file, that's what this if/else hierarhcy does 
-#have giant list to make into list of lists
-#iterate through each db file
-  #db file will be a column name in final output
-  #everything is encased in one big loop around a list of db files to parse
+conn = sqlite3.connect(dbs)
+#We need to make a SQL connection to the database we are querying
 
-  #if user did pass genes or genenames
-    #translates genenames to genes
-    #store list in genes variable
-  #else
-    #select gene from extra
-    #make all genes into a list
+c = conn.cursor()
+#c connects to all the .db files
 
-  #iterate through each gene (see python practice example query stuff)
-    #if the user chose any general flags (anything from EXTRA, WEIGHTS, or SAMPLE INFO)
+data = []
+#List of lists .db files info to output for further pandas filtering and parsing
+#Note: Are we supposed to add .db file name to data list for pandas? Talk to Shreya later
 
-      #if chose anything from extra
-        #select n.snps.in.model,test_R2_avg,etc. from extra where gene is iterated gene
-          #it'll output a tuple
-          #store all these in variables to be used later on (at least the gene)
-      
-      #repeat these lines for the sample info flags
+if weights_flags != 0:
+    c.execute('select * from weights ;')
+    for row in c:
+        rsid.append(str(row[0]))
+        varID.append(str(row[1]))
+        ref_allele.append(str(row[2])
+        eff_allele.append(str(row[3])
+        weight.append(str(row[4])
+    #Retrieves weight flags info and to later add to data list 
+    #Does there need to be more conditionals before appending? Maybe change code upstream?
 
-      #if user chooses any weights flags
-        #select rsid,var_ID,etc. from weights where gene is iterated gene
-          #it'll output a tuple
-          #store all these in variables to be used later on
-          #then append all information (all info in weights, all info in extra, all info in sample info flags) to list of lists
+else:
+    rsid.append(None)
+    varID.append(None)
+    ref_allele.append(None)
+    eff_allele.append(None)
+    weight.append(None)
+    #Also just an fyi my .py file was being weird, there might be some spacing issues here
+    #Is there a better way to make this alternative conditional?
+    #Sets these values to none so python doesn't freak out when you try to add them to the data list and they were never declared
 
-  #else (user chooses no flags)
-    #get list of all genes in model
-    #iterate through each gene
-      #pull out cv_R2_avg
-      #search in weights for all of them
-        #pull rsid and weights
+if geneNames == "true":
+   c.execute('select * from genes ;')
+   for row in c:
+     genename.append(str(row[2]))
+
+elif geneNames == "false":
+   c.execute('select * from genes ;')
+   for row in c:
+     gene.append(str(row[1]))
+ #adds to gene or genename depending on input, which was determined upstream by geneName variable 
+
+else:
+   continue
+ #We will come back to this else case later in the code but we don't want to assign values such as weight just yet, messes up downstream conditionals
+
+tempGene = []
+                          
+for i in range(len(genename)):
+   #tempGene[i] = genename[i] translated to gene, finish later
+   gene.append(tempGene[i])
+#Use to convert genename to gene 
+               
+if extra_flags != 0:
+    c.execute('select * from extra ;')
+    for row in c:
+       n.snps.in.model.append(str(row[0]))
+       test_R2_avg.append(str(row[1]))
+       cv_R2_avg.append(str(row[2]))
+       rho_avg.append(str(row[3]))
+       rho_zscore.append(str(row[4]))
+       pred.perf.R2.append(str(row[5]))
+       pred.perf.pval.append(str(row[6]))
+#Retrieves extra flags info and to later add to data list 
+
+else:
+   n.snps.in.model.append(None)
+   test_R2_avg.append(None)
+   cv_R2_avg.append(None)
+   rho_avg.append(None)
+   rho_zscore.append(None)
+   pred.perf.R2.append(None)
+   pred.perf.pval.append(None)                   
+
+if sample_info_flags != 0:
+   c.execute('select * from sample_info ;')
+   for row in c:
+      n_samples.append(str(row[0])
+      population.append(str(row[1])
+      tissue.append(str(row[2])
+#Retrieves sample_info flags info to later add to data list 
+
+else:
+   n_samples.append(None)
+   population.append(None)
+   tissue.append(None)          
+
+if geneNames == "empty":
+#addresses case where user chooses no flags except db
+#selects default/common query values
+   gene.append(None)
+   c.execute('select * from weights ;')
+   for row in c:
+      rsid.append(str(row[0]))
+      weight.append(str(row[4])
+   c.execute('select * from genes ;')
+   for row in c:
+      gene.append(str(row[2]))
+   c.execute('select * from extra ;')
+      cv_R2_avg.append(str(row[2]))
+                    
+                          
+#Note: These for loops will likely have to become very piecemeal to maintain extra values/the order Shreya specified in her part of the code, however I'm keeping them in simpler chunks for now
+                    
+data.append([rsid, varID, ref_allele, eff_allele, weight, gene, n.snps.in.model, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred.perf.R2, pred.perf.pval, n_samples, population, tissue]
+                          
+conn.close()
 
 ########        
 #SHREYA#
