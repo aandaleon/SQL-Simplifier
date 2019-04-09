@@ -1,30 +1,41 @@
 # SQLite3-wrapper
-Developing a Python wrapper for SQLite3 to take in parameters from the user and automate the queries to the database, producing .csv files ready for parsing
 
-Summary: https://docs.google.com/presentation/d/1Xarn0oowpogUH9NmHpkTC-sKIEeIR__ac2_Azgp5Ilo/edit?usp=sharing
+# Overview
+This repository contains a Python wrapper for SQLite3 to take in parameters from the user and automate the queries to PrediXcan database files, producing .csv files ready for further analysis.
 
-Presentation 1 Link(can view only): https://docs.google.com/presentation/d/1lDZIZd-aw6z8_7F-tAtBdKWFPR-5bLE_pI3pmGNPjFM/edit?usp=sharing
+# Software Requirements
+* Linux
+* [Python 3.x](https://www.python.org/downloads/) with the libraries: **find version numbers for all of these*
+  * [argparse](https://docs.python.org/3/library/argparse.html)
+  * [numpy](http://www.numpy.org/)
+  * [os](https://docs.python.org/3/library/os.html)
+  * [pandas](https://pandas.pydata.org/)
+  * [sqlite3](https://docs.python.org/3/library/sqlite3.html)
+  * [sys](https://docs.python.org/3/library/sys.html)
 
-PrediXcan paper (see methods): https://www.nature.com/articles/ng.3367
+# Downloading the project
+Open a terminal session and enter: `git clone https://github.com/aandaleon/SQLite3-wrapper.git; cd SQLite3-wrapper`
 
-GTEx about: https://gtexportal.org/home/documentationPage
+# Input files
+### Required
+* One database file or one folder containing database files
+### Optional
+* List of genes (Ensembl ids), one per row
+* List of gene names, one per row
 
-GTEx portal: http://science.sciencemag.org/content/348/6235/648
+# Example
 
-Description of layout of .db files: https://s3.amazonaws.com/predictdb2/contributed/MESA-2018-05-v2/MESAdb_2018-05-28_updated_README.txt
+# Program options
+**describe flags here**
 
-# 1)	REQUIREMENT’S:
-    -Documentation (Angela)
-    -SQL querying (Carlee)
-    -CSV parsing (Shreya)
-# 2)	WHO IS OUR USER?
-    The Wheeler Lab
-# 3)	WHAT IS OUR GOAL?
-    To take parameters(gene id, gene name, # of SNPs in the model, 
-    test r^2 average, cross validation of r^2 average, etc.) from 
-    the user and query databases from PredictDB.org to gather info 
-    about geneotype, gene expression, and associations. This info 
-    will be placed in a .csv file for the user to parse/use. 
-# 4)  SOFTWARE NEEDED:
-    SQL, Pandas, .db files(input)
-# 5)	PLAN OF ACTION
+
+
+# Project summaries
+* [Project prompt](https://docs.google.com/presentation/d/1Xarn0oowpogUH9NmHpkTC-sKIEeIR__ac2_Azgp5Ilo/edit?usp=sharing)
+* [Presentation 1](https://docs.google.com/presentation/d/1lDZIZd-aw6z8_7F-tAtBdKWFPR-5bLE_pI3pmGNPjFM/edit?usp=sharing)
+
+# Quick background
+Our project queries information from database files used by the program [PrediXcan](https://www.nature.com/articles/ng.3367). PrediXcan predicts gene expression by aggregate precalculated weights based on an individual's genotype that are stored in database files. These weights are calculated in various tissues and cohorts, such as the [Genotype-Tissue Expression Project (GTEx)](https://gtexportal.org/home/documentationPage), and all public database files are available at [predictdb.org](predictdb.org). A general layout of database files is available [here])(https://s3.amazonaws.com/predictdb2/contributed/MESA-2018-05-v2/MESAdb_2018-05-28_updated_README.txt). We give the users the ability to query information from these models without prior knowledge of SQL and in a simple command line format.
+
+### Authors
+This program and documentation were created by Angela Andaleon, Carlee Bettler, and Sherya Wadhwa for our Computational Biology class spring 2019 for Dr. Catherine Putonti. The original project idea was proposed by Angela Andaleon, Peter Fiorica, Ryan Schubert, and Dr. Heather Wheeler.
