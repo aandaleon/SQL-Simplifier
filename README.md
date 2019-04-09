@@ -14,7 +14,7 @@ This repository contains a Python wrapper for SQLite3 to take in parameters from
   * [sys](https://docs.python.org/3/library/sys.html)
 
 ## Downloading the project
-Open a terminal session and enter: `git clone https://github.com/aandaleon/SQLite3-wrapper.git; cd SQLite3-wrapper`
+Open a terminal session and enter: `git clone https://github.com/aandaleon/SQLite3-wrapper.git`
 
 ## Input files
 ### Required
@@ -24,18 +24,46 @@ Open a terminal session and enter: `git clone https://github.com/aandaleon/SQLit
 * List of gene names, one per row
 
 ## Example
+**have one example that has a list of genes, one that queries all in a db file, and one that doesn't query weights**
 
 ## Program options
-**describe flags here**
+* Input files
+  * `--db`: path to .db file or folder path you want to query
+  * `--genes`: file containing gene (Ensembl IDs) separated by line
+  * `--genenames`: file containing gene names separated by line
 
+* Inclusion parameters
+  * `--n.snps.in.model`: Output the number of SNPs within the cis window that have non-zero weights, as found by elastic net.
+  * `--test_R2_avg`: Output the average coefficient of determination when predicting values of the hold out fold during nested cross validation.
+  * `--cv_R2_avg`: Output the average coefficient of determination for each of the hold out folds when cross-validation was performed on the entire data set.
+  * `--rho_avg`: Output the average correlation between predicted and observed on the hold out folds when doing nested cross-validation.
+  * `--rho_zscore`: Output the transformation of rho_avg into a z-score using Stouffer's Method.
+  * `--pred.perf.R2`: Output the rho_avg squared.
+  * `--pred.perf.pval`: Output the p-value for rho_zscore.
+  * `--rsid`: Output the rsids in the models of queried genes.
+  * `--varID`: Output the variant IDs in the models of queried genes. These are string labels of the format chromosome_position_allele1_allele2_build. All varIDs are from build 37 of the HUman Reference Genome.
+  * `--ref_allele`: Output the reference alleles of the SNPs in the models of the queried genes.
+  * `--eff_allele`: Output the effect alleles of the SNPs in the models of the queried genes.
+  * `--weight`: Output the effect alleles of the SNPs in the models of the queried genes.
+  * `--n_samples`: Output the number of samples used the make the .db file.
+  * `--population`: Output the population studied.
+  * `--tissue`: Output the tissue or MESA population from which RNA was sequenced.
 
+* Filtering parameters
+  * `--test_R2_avg_thres` (default = 0): Restrict the test_R2_avg to values above this threshold.
+  * `--cv_R2_avg` (default = 0): Restrict the cv_R2_avg to values above this threshold.
+  * `--rho_avg_thres` (default = 0): Restrict the rho_avg to values above this threshold.
+  * `--pred.perf.R2_thres` (default = 0): Restrict the test_R2_avg to values above this threshold.
+  * `--pred.perf.pval_thres` (default = 1): Restrict the pred_perf_pval to values below this threshold.
+
+When the program is run without any parameters or gene lists, it will query every gene in a model and output `cv_R2_avg`, `rsid`, and `weight`, the most common metric utilized by the Wheeler lab.
 
 ## Project summaries
 * [Project prompt](https://docs.google.com/presentation/d/1Xarn0oowpogUH9NmHpkTC-sKIEeIR__ac2_Azgp5Ilo/edit?usp=sharing)
 * [Presentation 1](https://docs.google.com/presentation/d/1lDZIZd-aw6z8_7F-tAtBdKWFPR-5bLE_pI3pmGNPjFM/edit?usp=sharing)
 
-## Quick background
-Our project queries information from database files used by the program [PrediXcan](https://www.nature.com/articles/ng.3367). PrediXcan predicts gene expression by aggregate precalculated weights based on an individual's genotype that are stored in database files. These weights are calculated in various tissues and cohorts, such as the [Genotype-Tissue Expression Project (GTEx)](https://gtexportal.org/home/documentationPage), and all public database files are available at [predictdb.org](predictdb.org). A general layout of database files is available [here](https://s3.amazonaws.com/predictdb2/contributed/MESA-2018-05-v2/MESAdb_2018-05-28_updated_README.txt). We give the users the ability to query information from these models without prior knowledge of SQL and in a simple command line format. For more detail on the context, goals, and milestones of the project, please consult the [design document](https://github.com/aandaleon/SQLite3-wrapper/wiki/Design-Document).
+## Quick background and resources
+Our project queries information from database files used by the program [PrediXcan](https://www.nature.com/articles/ng.3367). PrediXcan predicts gene expression by aggregate precalculated weights based on an individual's genotype that are stored in database files. These weights are calculated in various tissues and cohorts, such as the [Genotype-Tissue Expression Project (GTEx)](https://gtexportal.org/home/documentationPage), and all public database files are available at [predictdb.org](predictdb.org). A general layout of database files and descriptions for all information stored is available [here](https://s3.amazonaws.com/predictdb2/contributed/MESA-2018-05-v2/MESAdb_2018-05-28_updated_README.txt). We give the users the ability to query information from these models without prior knowledge of SQL and in a simple command line format. For more detail on the context, goals, and milestones of the project, please consult the [design document](https://github.com/aandaleon/SQLite3-wrapper/wiki/Design-Document).
 
 ## Authors
 This program and documentation were created by Angela Andaleon, Carlee Bettler, and Sherya Wadhwa for our Computational Biology class spring 2019 for Dr. Catherine Putonti. The original project idea was proposed by Angela Andaleon, Peter Fiorica, Ryan Schubert, and Dr. Heather Wheeler.
