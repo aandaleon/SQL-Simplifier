@@ -42,8 +42,7 @@ parser.add_argument("--cv_R2_avg_thres", type = float, dest = "cv_R2_avg_thres",
 parser.add_argument("--rho_avg_thres", type = float, dest = "rho_avg_thres", default = 0, help = "Restrict the rho_avg to values above this threshold. Default = 0.")
 parser.add_argument("--pred.perf.R2_thres", type = float, dest = "pred_perf_R2_thres", default = 0, help = "Restrict the test_R2_avg to values above this threshold. Default = 0.")
 parser.add_argument("--pred.perf.pval_thres", type = float, dest = "pred_perf_pval_thres", default = 1, help = "Restrict the pred_perf_pval to values below this threshold. Default = 1.")
-#CHROMOSOME NUMBER
-parser.add_argument("--chromosome", type = float, dest = "chromosome", default = 0, help = "Specifies chromosome being analyzed. Default = 0.")
+
 args = parser.parse_args() #then pass these arguments to further things
 
 ###INPUT SANITATION
@@ -102,8 +101,19 @@ if args.weight:
     weights_flags.append("weight")
 #print(weights_flags)
 
-query_thres_vals = []
-
+###STORING WEIGHTS (-Shreya)
+query_weight_vals = []
+if args.test_R2_avg_thres:
+    query_weight_vals.append("test_R2_avg_thres")
+if args.cv_R2_avg_thres:
+    query_weight_vals.append("cv_R2_avg_thres")
+if args.rho_avg_thres:
+    query_weight_vals.append("rho_avg_thres")
+if args.pred.perf.R2_thres:
+    query_weight_vals.append("pred_perf_R2_thres")
+if args.pred.perf.pval_thres:
+    query_weight_vals.append("pred_perf_pval_thres")
+ 
 
 ###SAMPLE INFO
 sample_info_flags = []
@@ -145,7 +155,7 @@ cv_R2_avg_thres = args.cv_R2_avg_thres
 rho_avg_thres = args.rho_avg_thres
 pred_perf_R2_thres = args.pred_perf_R2_thres
 pred_perf_pval_thres = args.pred_perf_pval_thres
-query_thres_vals = [test_R2_avg_thres, cv_R2_avg_thres, rho_avg_thres, pred_perf_R2_thres,pred_perf_pval_thres,pred_perf_pval_thres]
+
 '''
 So the flags the user wants are stored in:
     extra
@@ -161,36 +171,33 @@ print("\n\n\n\n\n\n") #space between what I'm (Angela) doing and downstream shiz
 #CARLEE#
 ########
 
-conn = sqlite3.connect(dbs)
-#We need to make a SQL connection to the database we are querying
-
-c = conn.cursor()
-#c connects to all the .db files
-
 data = []
 #List of lists .db files info to output for further pandas filtering and parsing
 #Note: Are we supposed to add .db file name to data list for pandas? Talk to Shreya later
 
-if weights_flags != 0:
-    c.execute('select * from weights ;')
-    for row in c:
-        rsid.append(str(row[0]))
-        varID.append(str(row[1]))
-        ref_allele.append(str(row[2])
-        eff_allele.append(str(row[3])
-        weight.append(str(row[4])
-    #Retrieves weight flags info and to later add to data list 
-    #Does there need to be more conditionals before appending? Maybe change code upstream?
-
-else:
-    rsid.append(None)
-    varID.append(None)
-    ref_allele.append(None)
-    eff_allele.append(None)
-    weight.append(None)
-    #Also just an fyi my .py file was being weird, there might be some spacing issues here
-    #Is there a better way to make this alternative conditional?
-    #Sets these values to none so python doesn't freak out when you try to add them to the data list and they were never declared
+#dbs is a list containing strings that are addresses of the .db files
+for db in dbs:
+    conn = sqlite3.connect(db)
+    #dbs are in .dbs
+    #We need to make a SQL connection to the database we are querying
+    c = conn.cursor()
+    #c connects to all the .db files
+    
+ #Note: Dr. P if you are looking at this this was originally not in a for loop, changing in class 
+    if len(weights_flags) != 0:
+        c.execute('select rsid, varID, ref_allele, eff_allele, weight from weights ;')
+        
+    
+    
+    c.execute('select gene from where genename = '"+ ensembleID+"';')
+     
+    if len(extra_flags) != 0:
+        c.execute('select n.snps.in.model, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred.perf.R2, pred.perf.pval from extra ;')
+    
+    if len(sample_info_flags) != 0:
+        c.execute('select n_samples, population, tissue from sample_info ;')
+        
+    
 
 if geneNames == "true":
    c.execute('select * from genes ;')
@@ -213,40 +220,6 @@ for i in range(len(genename)):
    #tempGene[i] = genename[i] translated to gene, finish later
    gene.append(tempGene[i])
 #Use to convert genename to gene 
-               
-if extra_flags != 0:
-    c.execute('select * from extra ;')
-    for row in c:
-       n.snps.in.model.append(str(row[0]))
-       test_R2_avg.append(str(row[1]))
-       cv_R2_avg.append(str(row[2]))
-       rho_avg.append(str(row[3]))
-       rho_zscore.append(str(row[4]))
-       pred.perf.R2.append(str(row[5]))
-       pred.perf.pval.append(str(row[6]))
-#Retrieves extra flags info and to later add to data list 
-
-else:
-   n.snps.in.model.append(None)
-   test_R2_avg.append(None)
-   cv_R2_avg.append(None)
-   rho_avg.append(None)
-   rho_zscore.append(None)
-   pred.perf.R2.append(None)
-   pred.perf.pval.append(None)                   
-
-if sample_info_flags != 0:
-   c.execute('select * from sample_info ;')
-   for row in c:
-      n_samples.append(str(row[0])
-      population.append(str(row[1])
-      tissue.append(str(row[2])
-#Retrieves sample_info flags info to later add to data list 
-
-else:
-   n_samples.append(None)
-   population.append(None)
-   tissue.append(None)          
 
 if geneNames == "empty":
 #addresses case where user chooses no flags except db
@@ -296,14 +269,18 @@ data_frame.columns = ["rsid", "varID", "ref_allele", "eff_allele", "weight", "ge
   #(this will all be in the same order so we just need to figure out what this order is)
 #only pull columns of what the user wants
 
-user_specified_flags = extra_flags + weights_flags + sample_info_flags
+user_specified_flags = []
 num_of_flags = len(extra_flags) + len(weights_flags) + len(sample_info_flags)
-
+for flag in extra_flags:
+    user_specified_flags.append(flag)
+for flag in weights_flags:
+    user_specified_flags.append(flag)
+for flag in sample_info_flags:
+    user_specified_flags.append(flag)
 if num_of_flags > 0:
     data_frame_mod = data_frame.loc[user_specified_flags]
 else:
     data_frame_mod = data_frame.loc["genename", "cv_r2_avg", "rsid", "weights"]
-data_frame_mod1 = data_frame_mod.loc[query_genes]
     
 #restrict to thresholds the user wants (see threshold flags)
   #ex. if only want cv_r2_avg > 0.1, only keep those
