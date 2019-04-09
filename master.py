@@ -329,6 +329,5 @@ else:
   #remove indexes cause they're annoying
   
 #additional ideas:
-  #pull what the genes have been implicated in the GWAS catalog
 #I want to do this with something like Beautifulsoup4 (-Shreya)
-  
+  #pull what the genes have been implicated in the GWAS catalog - https://www.ebi.ac.uk/gwas/downloads
