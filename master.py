@@ -101,7 +101,7 @@ if args.weight:
     weights_flags.append("weight")
 #print(weights_flags)
 
-###STORING WEIGHTS (Shreya)
+###STORING WEIGHTS (-Shreya)
 query_weight_vals = []
 if args.test_R2_avg_thres:
     query_weight_vals.append("test_R2_avg_thres")
@@ -148,7 +148,8 @@ else: #its (I assume) a folder
         sys.exit(1)
     print("Models queried: " + ", ".join([_.replace(folder_name, "") for _ in dbs])) #no need to print the folder name multiple times
 print(dbs)
-    
+
+#I think we can take this code out? (-Shreya)
 test_R2_avg_thres = args.test_R2_avg_thres
 cv_R2_avg_thres = args.cv_R2_avg_thres
 rho_avg_thres = args.rho_avg_thres
@@ -321,6 +322,7 @@ else:
 #restrict to thresholds the user wants (see threshold flags)
   #ex. if only want cv_r2_avg > 0.1, only keep those
    #(this will involve using a bunch of .loc)
+#To do this I will use the query_weight_vals array created above (-Shreya)
   
 #delete duplicate rows
 #print to csv
@@ -328,5 +330,5 @@ else:
   
 #additional ideas:
   #pull what the genes have been implicated in the GWAS catalog
-  
+#I want to do this with something like Beautifulsoup4 (-Shreya)
   
