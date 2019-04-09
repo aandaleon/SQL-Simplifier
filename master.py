@@ -4,6 +4,8 @@ import numpy as np
 import os
 import pandas as pd
 import sys
+import sqlite3
+
 
 #if the python script is run without any flags, just output genenames, cv_R2_avg, rsid, and weights (most common things we use)
 parser = argparse.ArgumentParser()
@@ -42,9 +44,6 @@ parser.add_argument("--cv_R2_avg_thres", type = float, dest = "cv_R2_avg_thres",
 parser.add_argument("--rho_avg_thres", type = float, dest = "rho_avg_thres", default = 0, help = "Restrict the rho_avg to values above this threshold. Default = 0.")
 parser.add_argument("--pred.perf.R2_thres", type = float, dest = "pred_perf_R2_thres", default = 0, help = "Restrict the test_R2_avg to values above this threshold. Default = 0.")
 parser.add_argument("--pred.perf.pval_thres", type = float, dest = "pred_perf_pval_thres", default = 1, help = "Restrict the pred_perf_pval to values below this threshold. Default = 1.")
-
-#CHROMOSOME INFO
-parser.add_argument("--chromosome", type = int, dest = "chromosome", default = 22, help = "Specifies chromosome being analyzed. Default = 22.")
 
 args = parser.parse_args() #then pass these arguments to further things
 
@@ -183,17 +182,35 @@ for db in dbs:
     
     if len(extra_flags) != 0:
         c.execute('select n.snps.in.model, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred.perf.R2, pred.perf.pval from extra ;')
+         for row in c:
+             n.snps.in.model.append(str(row[0]))
+             test_R2_avg.append(str(row[1]))
+             cv_R2_avg.append(str(row[2]))
+             rho_avg.append(str(row[3]))
+             rho_zscore.append(str(row[4]))
+             pred.perf.R2.append(str(row[5]))
+             pred.perf.pval.append(str(row[6]))
     
     if len(sample_info_flags) != 0:
-        c.execute('select n_samples, population, tissue from sample_info ;')                  
+        c.execute('select n_samples, population, tissue from sample_info ;')
+        for row in c:
+            n_samples.append(str(row[0])
+            population.append(str(row[1])
+            tissue.append(str(row[2])
                           
-    for gene in genes: 
+    for gene in query_genes: 
  #Note: Dr. P if you are looking at this this was originally not in a for loop, changing in class 
         c.execute('select gene from extra;')
         if len(weights_flags) != 0:
             c.execute('select rsid, varID, ref_allele, eff_allele, weight from weights ;')
+            for row in c:
+                rsid.append(str(row[0]))
+                varID.append(str(row[1]))
+                ref_allele.append(str(row[2])
+                eff_allele.append(str(row[3])
+                weight.append(str(row[4])
             #Weights are dependent on genes
-            data.append([gene, rsid, varID, ref_allele, eff_allele, weight, n.snps.in.model, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred.perf.R2, pred.perf.pval, n_samples, population, tissue])
+        data.append([gene, rsid, varID, ref_allele, eff_allele, weight, n_snps_in_model, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred_perf_R2, pred_perf_pval, n_samples, population, tissue])
            
 #Note: Fix order of data.append later for Shreya 
 
