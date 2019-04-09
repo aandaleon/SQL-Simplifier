@@ -47,8 +47,6 @@ args = parser.parse_args() #then pass these arguments to further things
 
 ###INPUT SANITATION
 #List of dbs holds addresses to .db files user wants to query
-geneNames = ''
-#Note: geneNames variable created and edited by Carlee 
 
 if args.db is None:
     print("No .db destination detected. Please input a .db destination using the --db flag.")
@@ -56,15 +54,12 @@ if args.db is None:
 ###GENES, GENENAMES
 if args.genes is None and args.genenames is None:
     print("No list of genes has been supplied with --genes or --genenames. All genes in the model(s) will be queried.")
-    #geneNames = "empty"
 elif args.genes is not None and args.genenames is not None:
     print("Please select an input for only genes or only genenames and not both.")
 elif args.genes is not None:
     query_genes = list(np.loadtxt(args.genes, dtype = "str", ndmin = 1))
-    geneNames = FALSE
 else:# args.genenames is not None:
     query_genes = list(np.loadtxt(args.genenames, dtype = "str", ndmin = 1))
-    geneNames = TRUE
 
 ###EXTRA
 extra_flags = [] #store the flags the user passes
@@ -183,26 +178,15 @@ for db in dbs:
     c = conn.cursor()
     #c connects to all the .db files
     
+    for gene in genes: 
  #Note: Dr. P if you are looking at this this was originally not in a for loop, changing in class 
-    if len(weights_flags) != 0:
-        c.execute('select rsid, varID, ref_allele, eff_allele, weight from weights ;')
-        
-    if geneNames == None:
         c.execute('select gene from extra;')
-        #select gene
-        c.execute('select rsid, weight from weights ;')
-        c.execute('select cv_R2_avg from extra ;')
-        for row in c:
-            data.append([rsid, weight, gene, cv_R2_avg])
-   
-    if geneNames == TRUE:   
-        c.execute('select gene from extra where genename = '"+ Ensembl IDs+"';')
-        #This is likely written slightly wrong, go back to this 
-        
-        
-    if geneNames == FALSE:
-         c.execute('select gene from extra';')
-       
+        if len(weights_flags) != 0:
+            c.execute('select rsid, varID, ref_allele, eff_allele, weight from weights ;')
+            #Weights are dependent on genes
+            data.append([gene, rsid, varID, ref_allele, eff_allele, weight])
+         
+ 
     if len(extra_flags) != 0:
         c.execute('select n.snps.in.model, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred.perf.R2, pred.perf.pval from extra ;')
     
