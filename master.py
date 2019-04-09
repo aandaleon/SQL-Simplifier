@@ -178,24 +178,22 @@ for db in dbs:
     c = conn.cursor()
     #c connects to all the .db files
     
-    for gene in genes: 
- #Note: Dr. P if you are looking at this this was originally not in a for loop, changing in class 
-        c.execute('select gene from extra;')
-        if len(weights_flags) != 0:
-            c.execute('select rsid, varID, ref_allele, eff_allele, weight from weights ;')
-            #Weights are dependent on genes
-            data.append([gene, rsid, varID, ref_allele, eff_allele, weight])
-         
- 
     if len(extra_flags) != 0:
         c.execute('select n.snps.in.model, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred.perf.R2, pred.perf.pval from extra ;')
     
     if len(sample_info_flags) != 0:
         c.execute('select n_samples, population, tissue from sample_info ;')                  
                           
-#Note: These for loops will likely have to become very piecemeal to maintain extra values/the order Shreya specified in her part of the code, however I'm keeping them in simpler chunks for now
-                    
-data.append([rsid, varID, ref_allele, eff_allele, weight, gene, n.snps.in.model, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred.perf.R2, pred.perf.pval, n_samples, population, tissue])
+    for gene in genes: 
+ #Note: Dr. P if you are looking at this this was originally not in a for loop, changing in class 
+        c.execute('select gene from extra;')
+        if len(weights_flags) != 0:
+            c.execute('select rsid, varID, ref_allele, eff_allele, weight from weights ;')
+            #Weights are dependent on genes
+            data.append([gene, rsid, varID, ref_allele, eff_allele, weight, n.snps.in.model, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred.perf.R2, pred.perf.pval, n_samples, population, tissue])
+           
+#Note: Fix order of data.append later for Shreya 
+
                           
 conn.close()
 
