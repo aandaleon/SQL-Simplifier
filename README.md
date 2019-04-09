@@ -27,12 +27,12 @@ Open a terminal session and enter: `git clone https://github.com/aandaleon/SQLit
 **have one example that has a list of genes, one that queries all in a db file, and one that doesn't query weights**
 
 ## Program options
-* Input files
+* **Input files**
   * `--db`: path to .db file or folder path you want to query
   * `--genes`: file containing gene (Ensembl IDs) separated by line
   * `--genenames`: file containing gene names separated by line
 
-* Inclusion parameters
+* **Inclusion parameters**
   * `--n.snps.in.model`: Output the number of SNPs within the cis window that have non-zero weights, as found by elastic net.
   * `--test_R2_avg`: Output the average coefficient of determination when predicting values of the hold out fold during nested cross validation.
   * `--cv_R2_avg`: Output the average coefficient of determination for each of the hold out folds when cross-validation was performed on the entire data set.
@@ -49,7 +49,7 @@ Open a terminal session and enter: `git clone https://github.com/aandaleon/SQLit
   * `--population`: Output the population studied.
   * `--tissue`: Output the tissue or MESA population from which RNA was sequenced.
 
-* Filtering parameters
+* **Filtering parameters**
   * `--test_R2_avg_thres` (default = 0): Restrict the test_R2_avg to values above this threshold.
   * `--cv_R2_avg` (default = 0): Restrict the cv_R2_avg to values above this threshold.
   * `--rho_avg_thres` (default = 0): Restrict the rho_avg to values above this threshold.
