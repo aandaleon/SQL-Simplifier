@@ -3,7 +3,6 @@ import argparse
 import numpy as np
 import os
 import pandas as pd
-import sqlite3
 import sys
 
 #if the python script is run without any flags, just output genenames, cv_R2_avg, rsid, and weights (most common things we use)
@@ -57,15 +56,15 @@ if args.db is None:
 ###GENES, GENENAMES
 if args.genes is None and args.genenames is None:
     print("No list of genes has been supplied with --genes or --genenames. All genes in the model(s) will be queried.")
-    geneNames = "empty"
+    #geneNames = "empty"
 elif args.genes is not None and args.genenames is not None:
     print("Please select an input for only genes or only genenames and not both.")
 elif args.genes is not None:
     query_genes = list(np.loadtxt(args.genes, dtype = "str", ndmin = 1))
-    geneNames = "false"
+    geneNames = FALSE
 else:# args.genenames is not None:
     query_genes = list(np.loadtxt(args.genenames, dtype = "str", ndmin = 1))
-    geneNames = "true"
+    geneNames = TRUE
 
 ###EXTRA
 extra_flags = [] #store the flags the user passes
@@ -188,54 +187,27 @@ for db in dbs:
     if len(weights_flags) != 0:
         c.execute('select rsid, varID, ref_allele, eff_allele, weight from weights ;')
         
-    
-    
-    c.execute('select gene from where genename = '"+ ensembleID+"';')
-     
+    if geneNames == None:
+        c.execute('select gene from extra;')
+        #select gene
+        c.execute('select rsid, weight from weights ;')
+        c.execute('select cv_R2_avg from extra ;')
+        for row in c:
+            data.append([rsid, weight, gene, cv_R2_avg])
+   
+    if geneNames == TRUE:   
+        c.execute('select gene from extra where genename = '"+ Ensembl IDs+"';')
+        #This is likely written slightly wrong, go back to this 
+        
+        
+    if geneNames == FALSE:
+         c.execute('select gene from extra';')
+       
     if len(extra_flags) != 0:
         c.execute('select n.snps.in.model, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred.perf.R2, pred.perf.pval from extra ;')
     
     if len(sample_info_flags) != 0:
-        c.execute('select n_samples, population, tissue from sample_info ;')
-        
-    
-
-if geneNames == "true":
-   c.execute('select * from genes ;')
-   for row in c:
-     genename.append(str(row[2]))
-
-elif geneNames == "false":
-   c.execute('select * from genes ;')
-   for row in c:
-     gene.append(str(row[1]))
- #adds to gene or genename depending on input, which was determined upstream by geneName variable 
-
-else:
-   continue
- #We will come back to this else case later in the code but we don't want to assign values such as weight just yet, messes up downstream conditionals
-
-tempGene = []
-                          
-for i in range(len(genename)):
-   #tempGene[i] = genename[i] translated to gene, finish later
-   gene.append(tempGene[i])
-#Use to convert genename to gene 
-
-if geneNames == "empty":
-#addresses case where user chooses no flags except db
-#selects default/common query values
-   gene.append(None)
-   c.execute('select * from weights ;')
-   for row in c:
-      rsid.append(str(row[0]))
-      weight.append(str(row[4])
-   c.execute('select * from genes ;')
-   for row in c:
-      gene.append(str(row[2]))
-   c.execute('select * from extra ;')
-      cv_R2_avg.append(str(row[2]))
-                    
+        c.execute('select n_samples, population, tissue from sample_info ;')                  
                           
 #Note: These for loops will likely have to become very piecemeal to maintain extra values/the order Shreya specified in her part of the code, however I'm keeping them in simpler chunks for now
                     
