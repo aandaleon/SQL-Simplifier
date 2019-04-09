@@ -275,7 +275,7 @@ if geneNames == "empty":
                           
 #Note: These for loops will likely have to become very piecemeal to maintain extra values/the order Shreya specified in her part of the code, however I'm keeping them in simpler chunks for now
                     
-data.append([rsid, varID, ref_allele, eff_allele, weight, gene, n.snps.in.model, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred.perf.R2, pred.perf.pval, n_samples, population, tissue]
+data.append(rsid, varID, ref_allele, eff_allele, weight, gene, n.snps.in.model, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred.perf.R2, pred.perf.pval, n_samples, population, tissue)
                           
 conn.close()
 
