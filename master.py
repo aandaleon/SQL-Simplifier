@@ -3,6 +3,7 @@ import argparse
 import numpy as np
 import os
 import pandas as pd
+import sqlite3
 import sys
 
 #if the python script is run without any flags, just output genenames, cv_R2_avg, rsid, and weights (most common things we use)
