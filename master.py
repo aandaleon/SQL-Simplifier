@@ -296,18 +296,14 @@ data_frame.columns = ["rsid", "varID", "ref_allele", "eff_allele", "weight", "ge
   #(this will all be in the same order so we just need to figure out what this order is)
 #only pull columns of what the user wants
 
-user_specified_flags = []
+user_specified_flags = extra_flags + weights_flags + sample_info_flags
 num_of_flags = len(extra_flags) + len(weights_flags) + len(sample_info_flags)
-for flag in extra_flags:
-    user_specified_flags.append(flag)
-for flag in weights_flags:
-    user_specified_flags.append(flag)
-for flag in sample_info_flags:
-    user_specified_flags.append(flag)
+
 if num_of_flags > 0:
     data_frame_mod = data_frame.loc[user_specified_flags]
 else:
     data_frame_mod = data_frame.loc["genename", "cv_r2_avg", "rsid", "weights"]
+data_frame_mod1 = data_frame_mod.loc[query_genes]
     
 #restrict to thresholds the user wants (see threshold flags)
   #ex. if only want cv_r2_avg > 0.1, only keep those
