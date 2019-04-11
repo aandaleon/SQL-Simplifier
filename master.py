@@ -171,7 +171,6 @@ data = []
 #List of lists .db files info to output for further pandas filtering and parsing
 #Note: Are we supposed to add .db file name to data list for pandas? Talk to Shreya later
 
-db = ''
 genename = ''
 rsid = ''
 varID = ''
