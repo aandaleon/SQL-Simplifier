@@ -5,13 +5,13 @@ This repository contains a Python wrapper for SQLite3 to take in parameters from
 
 ## Software Requirements
 * Linux
-* [Python 3.x](https://www.python.org/downloads/) with the libraries: **find version numbers for all of these*
-  * [argparse](https://docs.python.org/3/library/argparse.html)
-  * [numpy](http://www.numpy.org/)
-  * [os](https://docs.python.org/3/library/os.html)
-  * [pandas](https://pandas.pydata.org/)
-  * [sqlite3](https://docs.python.org/3/library/sqlite3.html)
-  * [sys](https://docs.python.org/3/library/sys.html)
+* [Python 3.6.7](https://www.python.org/downloads/) with the libraries:
+  * [argparse](https://docs.python.org/3/library/argparse.html) 1.1
+  * [numpy](http://www.numpy.org/) 1.16.1
+  * [os](https://docs.python.org/3/library/os.html) 3.6.7
+  * [pandas](https://pandas.pydata.org/) 0.24.2
+  * [sqlite3](https://docs.python.org/3/library/sqlite3.html) 2.6.0
+  * [sys](https://docs.python.org/3/library/sys.html) 3.6.7
 
 ## Downloading the project
 Open a terminal session and enter: `git clone https://github.com/aandaleon/SQLite3-wrapper.git`
