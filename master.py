@@ -175,46 +175,34 @@ data = []
 #dbs is a list containing strings that are addresses of the .db files
 for db in dbs:
     conn = sqlite3.connect(db)
-    #dbs are in .dbs
-    #We need to make a SQL connection to the database we are querying
+        #dbs are in .dbs
+        #We need to make a SQL connection to the database we are querying
     c = conn.cursor()
     #c connects to all the .db files
     
     if len(extra_flags) != 0:
         c.execute('select n.snps.in.model, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred.perf.R2, pred.perf.pval from extra ;')
-         for row in c:
-             n.snps.in.model.append(str(row[0]))
-             test_R2_avg.append(str(row[1]))
-             cv_R2_avg.append(str(row[2]))
-             rho_avg.append(str(row[3]))
-             rho_zscore.append(str(row[4]))
-             pred.perf.R2.append(str(row[5]))
-             pred.perf.pval.append(str(row[6]))
-    
-    if len(sample_info_flags) != 0:
-        c.execute('select n_samples, population, tissue from sample_info ;')
         for row in c:
-            n_samples.append(str(row[0])
-            population.append(str(row[1])
-            tissue.append(str(row[2])
-                          
-    for gene in query_genes: 
- #Note: Dr. P if you are looking at this this was originally not in a for loop, changing in class 
+            n_snps_in_model.append(str(row[0]))
+            test_R2_avg.append(str(row[1]))
+            cv_R2_avg.append(str(row[2]))
+            rho_avg.append(str(row[3]))
+            rho_zscore.append(str(row[4]))
+            pred_perf_R2.append(str(row[5]))
+            pred_perf_pval.append(str(row[6]))
+
+    for gene in query_genes:
         c.execute('select gene from extra;')
         if len(weights_flags) != 0:
             c.execute('select rsid, varID, ref_allele, eff_allele, weight from weights ;')
             for row in c:
                 rsid.append(str(row[0]))
                 varID.append(str(row[1]))
-                ref_allele.append(str(row[2])
-                eff_allele.append(str(row[3])
-                weight.append(str(row[4])
-            #Weights are dependent on genes
+                ref_allele.append(str(row[2]))
+                eff_allele.append(str(row[3]))
+                weight.append(str(row[4]))
         data.append([gene, rsid, varID, ref_allele, eff_allele, weight, n_snps_in_model, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred_perf_R2, pred_perf_pval, n_samples, population, tissue])
-           
-#Note: Fix order of data.append later for Shreya 
 
-                          
 conn.close()
 
 ########        
