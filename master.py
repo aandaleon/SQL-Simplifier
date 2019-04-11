@@ -172,6 +172,23 @@ data = []
 #List of lists .db files info to output for further pandas filtering and parsing
 #Note: Are we supposed to add .db file name to data list for pandas? Talk to Shreya later
 
+rsid = ''
+varID = ''
+ref_allele = ''
+eff_allele= ''
+weight = ''
+n_snps_in_model = ''
+test_R2_avg = ''
+cv_R2_avg = ''
+rho_avg = ''
+rho_zscore = ''
+pred_perf_R2 = ''
+pred_perf_pval = ''
+n_samples = ''
+population = ''
+tissue = ''
+
+
 #dbs is a list containing strings that are addresses of the .db files
 for db in dbs:
     conn = sqlite3.connect(db)
@@ -180,30 +197,41 @@ for db in dbs:
     c = conn.cursor()
     #c connects to all the .db files
     
+
     if len(extra_flags) != 0:
-        c.execute('select n.snps.in.model, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred.perf.R2, pred.perf.pval from extra ;')
+        c.execute("select n.snps.in.model, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred.perf.R2, pred.perf.pval from extra ;")
         for row in c:
-            n_snps_in_model.append(str(row[0]))
-            test_R2_avg.append(str(row[1]))
-            cv_R2_avg.append(str(row[2]))
-            rho_avg.append(str(row[3]))
-            rho_zscore.append(str(row[4]))
-            pred_perf_R2.append(str(row[5]))
-            pred_perf_pval.append(str(row[6]))
+            n_snps_in_model = row[0]
+            test_R2_avg = row[1]
+            cv_R2_avg = row[2]
+            rho_avg = row[3]
+            rho_zscore = row[4]
+            pred_perf_R2 = row[5]
+            pred_perf_pval = row[6]
 
     for gene in query_genes:
-        c.execute('select gene from extra;')
+        c.execute("select gene from extra;")
+            #for row in c:
+            #gene = row[0]
+            #^Am I supposed to add this
+            
+
         if len(weights_flags) != 0:
-            c.execute('select rsid, varID, ref_allele, eff_allele, weight from weights ;')
+            c.execute("select rsid, varID, ref_allele, eff_allele, weight from weights ;")
             for row in c:
-                rsid.append(str(row[0]))
-                varID.append(str(row[1]))
-                ref_allele.append(str(row[2]))
-                eff_allele.append(str(row[3]))
-                weight.append(str(row[4]))
+                rsid = row[0]
+                varID = row[1]
+                ref_allele = row[2]
+                eff_allele = row[3]
+                weight = row[4]
         data.append([gene, rsid, varID, ref_allele, eff_allele, weight, n_snps_in_model, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred_perf_R2, pred_perf_pval, n_samples, population, tissue])
 
+print(data)
+
+
 conn.close()
+
+#Make sure to add db name
 
 ########        
 #SHREYA#
