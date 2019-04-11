@@ -22,6 +22,9 @@ Open a terminal session and enter: `git clone https://github.com/aandaleon/SQLit
 ### Optional
 * List of genes (Ensembl ids), one per row
 * List of gene names, one per row
+* Flags containing the information you want queried (see Program options)
+
+When the program is run without any parameters or gene lists, it will query every gene in a model and output `cv_R2_avg`, `rsid`, and `weight`, the most common metrics utilized by the Wheeler lab.
 
 ## Example
 **have one example that has a list of genes, one that queries all in a db file, and one that doesn't query weights**
@@ -55,8 +58,6 @@ Open a terminal session and enter: `git clone https://github.com/aandaleon/SQLit
   * `--rho_avg_thres` (default = 0): Restrict the rho_avg to values above this threshold.
   * `--pred.perf.R2_thres` (default = 0): Restrict the test_R2_avg to values above this threshold.
   * `--pred.perf.pval_thres` (default = 1): Restrict the pred_perf_pval to values below this threshold.
-
-When the program is run without any parameters or gene lists, it will query every gene in a model and output `cv_R2_avg`, `rsid`, and `weight`, the most common metrics utilized by the Wheeler lab.
 
 ## Project summaries
 * [Project prompt](https://docs.google.com/presentation/d/1Xarn0oowpogUH9NmHpkTC-sKIEeIR__ac2_Azgp5Ilo/edit?usp=sharing)
