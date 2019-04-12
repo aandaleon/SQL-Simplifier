@@ -98,19 +98,6 @@ if args.weight:
     weights_flags.append("weight")
 #print(weights_flags)
 
-###STORING WEIGHTS (-Shreya)
-query_weight_vals = []
-if args.test_R2_avg_thres:
-    query_weight_vals.append("test_R2_avg_thres")
-if args.cv_R2_avg_thres:
-    query_weight_vals.append("cv_R2_avg_thres")
-if args.rho_avg_thres:
-    query_weight_vals.append("rho_avg_thres")
-if args.pred.perf.R2_thres:
-    query_weight_vals.append("pred_perf_R2_thres")
-if args.pred.perf.pval_thres:
-    query_weight_vals.append("pred_perf_pval_thres")
- 
 
 ###SAMPLE INFO
 sample_info_flags = []
@@ -146,7 +133,7 @@ else: #its (I assume) a folder
     print("Models queried: " + ", ".join([_.replace(folder_name, "") for _ in dbs])) #no need to print the folder name multiple times
 print(dbs)
 
-#I think we can take this code out? (-Shreya)
+
 test_R2_avg_thres = args.test_R2_avg_thres
 cv_R2_avg_thres = args.cv_R2_avg_thres
 rho_avg_thres = args.rho_avg_thres
