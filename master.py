@@ -155,7 +155,6 @@ data = [] #List of lists .db files info to output for further pandas filtering a
 #Note: Are we supposed to add .db file name to data list for pandas? Talk to Shreya later
   #Angela: yes
 
-#Angela: i feel like we should be passing NA or something instead of blank strings
 genename = NA
 rsid = NA
 varID = NA
@@ -181,40 +180,38 @@ for db in dbs: #dbs are in .dbs
     for row in c:
         genename = row[0]
     
-    if len(extra_flags) != 0: #Angela: we agreed to query everything regardless of what the user input
-        c.execute("select [n.snps.in.model], test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, [pred.perf.R2], [pred.perf.pval] from extra ;")
-        for row in c:
-            n_snps_in_model = row[0]
-            test_R2_avg = row[1]
-            cv_R2_avg = row[2]
-            rho_avg = row[3]
-            rho_zscore = row[4]
-            pred_perf_R2 = row[5]
-            pred_perf_pval = row[6]
+    c.execute("select [n.snps.in.model], test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, [pred.perf.R2], [pred.perf.pval] from extra ;")
+    for row in c:
+        n_snps_in_model = row[0]
+        test_R2_avg = row[1]
+        cv_R2_avg = row[2]
+        rho_avg = row[3]
+        rho_zscore = row[4]
+        pred_perf_R2 = row[5]
+        pred_perf_pval = row[6]
 
     for gene in query_genes: #Angela: since we're doing all genes in Carlee's part this is unnecessary
         c.execute("select gene from extra;")
         for row in c:
             gene = row[0]
         #^Am I supposed to add this; Angela: we start with genes, not genenames
-
-        if len(weights_flags) != 0: #Angela: see note in line 195
-            c.execute("select rsid, varID, ref_allele, eff_allele, weight from weights ;")
-            for row in c:
-                rsid = row[0]
-                varID = row[1]
-                ref_allele = row[2]
-                eff_allele = row[3]
-
-    if(len(sample_info_flags)) != 0: #Angela: see note in line 195
-        c.execute('select n_samples, population, tissue from sample_info ;')
+        
+        c.execute("select rsid, varID, ref_allele, eff_allele, weight from weights ;")
         for row in c:
-            n_samples = row[0]
-            population = row[1]
-            tissue = row[2]
+            rsid = row[0]
+            varID = row[1]
+            ref_allele = row[2]
+            eff_allele = row[3]
+
+    
+    c.execute('select n_samples, population, tissue from sample_info ;')
+    for row in c:
+        n_samples = row[0]
+        population = row[1]
+        tissue = row[2]
 
 #Angela: switch the order of sample info flags and weights flags and do this command during the iterations of weights flags
-data.append([genename, gene, rsid, varID, ref_allele, eff_allele, weight,test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred_perf_R2, pred_perf_pval, n_samples, population, tissue])
+data.append([genename, gene, rsid, varID, ref_allele, eff_allele, weight, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred_perf_R2, pred_perf_pval, n_samples, population, tissue])
 print(data)
 conn.close()
 
