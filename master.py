@@ -156,22 +156,22 @@ data = [] #List of lists .db files info to output for further pandas filtering a
   #Angela: yes
 
 #Angela: i feel like we should be passing NA or something instead of blank strings
-genename = ''
-rsid = ''
-varID = ''
-ref_allele = ''
-eff_allele= ''
-weight = ''
-n_snps_in_model = ''
-test_R2_avg = ''
-cv_R2_avg = ''
-rho_avg = ''
-rho_zscore = ''
-pred_perf_R2 = ''
-pred_perf_pval = ''
-n_samples = ''
-population = ''
-tissue = ''
+genename = NA
+rsid = NA
+varID = NA
+ref_allele = NA
+eff_allele= NA
+weight = NA
+n_snps_in_model = NA
+test_R2_avg = NA
+cv_R2_avg = NA
+rho_avg = NA
+rho_zscore = NA
+pred_perf_R2 = NA
+pred_perf_pval = NA
+n_samples = NA
+population = NA
+tissue = NA
 
 #dbs is a list containing strings that are addresses of the .db files
 for db in dbs: #dbs are in .dbs
