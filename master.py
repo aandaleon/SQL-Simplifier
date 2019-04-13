@@ -6,6 +6,9 @@ import pandas as pd
 import sys
 import sqlite3
 
+########
+#ANGELA#
+########
 
 #if the python script is run without any flags, just output genenames, cv_R2_avg, rsid, and weights (most common things we use)
 parser = argparse.ArgumentParser()
@@ -53,6 +56,7 @@ args = parser.parse_args() #then pass these arguments to further things
 if args.db is None:
     print("No .db destination detected. Please input a .db destination using the --db flag.")
     sys.exit(1)
+
 ###GENES, GENENAMES
 if args.genes is None and args.genenames is None:
     print("No list of genes has been supplied with --genes or --genenames. All genes in the model(s) will be queried.")
@@ -96,8 +100,6 @@ if args.eff_allele:
     weights_flags.append("eff_allele")
 if args.weight:
     weights_flags.append("weight")
-#print(weights_flags)
-
 
 ###SAMPLE INFO
 sample_info_flags = []
@@ -107,13 +109,15 @@ if args.population:
     sample_info_flags.append("population")
 if args.tissue:
     sample_info_flags.append("tissue")
-#print(sample_info_flags)
 
+#make sure the user gets what they want
 query_flags = extra_flags + weights_flags + sample_info_flags
 if len(query_flags) == 0:
-    print("The user has passed no query flags. Do a thing.")
-print("Flags queried: " + ", ".join(query_flags))
+    print("No query flags have been passed. Program will output cv_R2_avg, rsid, and weights of all genes in the input models.")
+else: 
+    print("Flags queried: " + ", ".join(query_flags))
 
+#making input .dbs into a list
 args_db = args.db #.endswith doesn't like arguments
 if args_db.endswith(".db"): #its a single .db file
     dbs = [(args_db)]
@@ -124,6 +128,9 @@ else: #its (I assume) a folder
     else:
         folder_name = args_db + "/"
     dbs = []
+    if not os.path.exists(folder_name):
+        print("The .db path is invalid. Please input a valid .db path.")
+        sys.exit(1)
     for file in os.listdir(folder_name): #find files in a folder - https://stackoverflow.com/questions/3964681/find-all-files-in-a-directory-with-extension-txt-in-python
         if file.endswith(".db"):
             dbs.append(folder_name + file)
@@ -133,31 +140,22 @@ else: #its (I assume) a folder
     print("Models queried: " + ", ".join([_.replace(folder_name, "") for _ in dbs])) #no need to print the folder name multiple times
 print(dbs)
 
-
+#THRES FLAGS (for filtering later)
 test_R2_avg_thres = args.test_R2_avg_thres
 cv_R2_avg_thres = args.cv_R2_avg_thres
 rho_avg_thres = args.rho_avg_thres
 pred_perf_R2_thres = args.pred_perf_R2_thres
 pred_perf_pval_thres = args.pred_perf_pval_thres
 
-'''
-So the flags the user wants are stored in:
-    extra
-    weights
-    sample info
-    
-    Thresholds are their own variables (see 123-127)
-'''
-
-print("\n\n\n\n\n\n") #space between what I'm (Angela) doing and downstream shiz
-
 ########
 #CARLEE#
 ########
-data = []
-#List of lists .db files info to output for further pandas filtering and parsing
-#Note: Are we supposed to add .db file name to data list for pandas? Talk to Shreya later
 
+data = [] #List of lists .db files info to output for further pandas filtering and parsing
+#Note: Are we supposed to add .db file name to data list for pandas? Talk to Shreya later
+  #Angela: yes
+
+#Angela: i feel like we should be passing NA or something instead of blank strings
 genename = ''
 rsid = ''
 varID = ''
@@ -176,19 +174,14 @@ population = ''
 tissue = ''
 
 #dbs is a list containing strings that are addresses of the .db files
-for db in dbs:
-    conn = sqlite3.connect(db)
-        #dbs are in .dbs
-        #We need to make a SQL connection to the database we are querying
-    c = conn.cursor()
-    #c connects to all the .db files
-    
-    c.execute("select genename from extra;")
+for db in dbs: #dbs are in .dbs
+    conn = sqlite3.connect(db) #We need to make a SQL connection to the database we are querying
+    c = conn.cursor() #c connects to all the .db files
+    c.execute("select genename from extra;") #Angela: why genename? We need gene
     for row in c:
         genename = row[0]
     
-    
-    if len(extra_flags) != 0:
+    if len(extra_flags) != 0: #Angela: we agreed to query everything regardless of what the user input
         c.execute("select [n.snps.in.model], test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, [pred.perf.R2], [pred.perf.pval] from extra ;")
         for row in c:
             n_snps_in_model = row[0]
@@ -199,14 +192,13 @@ for db in dbs:
             pred_perf_R2 = row[5]
             pred_perf_pval = row[6]
 
-    
-    for gene in query_genes:
+    for gene in query_genes: #Angela: since we're doing all genes in Carlee's part this is unnecessary
         c.execute("select gene from extra;")
         for row in c:
             gene = row[0]
-        #^Am I supposed to add this
+        #^Am I supposed to add this; Angela: we start with genes, not genenames
 
-        if len(weights_flags) != 0:
+        if len(weights_flags) != 0: #Angela: see note in line 195
             c.execute("select rsid, varID, ref_allele, eff_allele, weight from weights ;")
             for row in c:
                 rsid = row[0]
@@ -214,18 +206,16 @@ for db in dbs:
                 ref_allele = row[2]
                 eff_allele = row[3]
 
-    if(len(sample_info_flags)) != 0:
+    if(len(sample_info_flags)) != 0: #Angela: see note in line 195
         c.execute('select n_samples, population, tissue from sample_info ;')
         for row in c:
             n_samples = row[0]
             population = row[1]
             tissue = row[2]
 
-
+#Angela: switch the order of sample info flags and weights flags and do this command during the iterations of weights flags
 data.append([genename, gene, rsid, varID, ref_allele, eff_allele, weight,test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred_perf_R2, pred_perf_pval, n_samples, population, tissue])
-
 print(data)
-
 conn.close()
 
 ########        
@@ -238,6 +228,7 @@ conn.close()
 
 #Don't we need to take in the genes that the user wants to query? Once we do that, I would add a line of code to the flag retrieving
 #code to only keep the rows with those genes, correct?
+  #Angela: yes, ask Carlee what she saved those as
 data_frame = pd.DataFrame(data) #make list of lists into dataframe
 data_frame.index = ["gene"]
 data_frame.columns = ["rsid", "varID", "ref_allele", "eff_allele", "weight", "genename", "gene_type", "alpha",
@@ -245,6 +236,16 @@ data_frame.columns = ["rsid", "varID", "ref_allele", "eff_allele", "weight", "ge
                "cv_R2_sd", "in_sample_R2","nested_cv_fisher_pval", "rho_avg", "rho_se", "rho_zscore", "pred.perf.R2",
                "pred.perf.pval", "pred.perf.qval", "chromosome", "cv_seed", "n_samples", "population", "tissue"] #give column names so user knows what they're looking at
 
+#Angela: this is already called query_flags so its redundant
+user_specified_flags = []
+num_of_flags = len(extra_flags) + len(weights_flags) + len(sample_info_flags)
+for flag in extra_flags:
+    user_specified_flags.append(flag)
+for flag in weights_flags:
+    user_specified_flags.append(flag)
+for flag in sample_info_flags:
+    user_specified_flags.append(flag)
+    
 #if user has flags 
   #get everything "true" the user wants
     #always include genename
@@ -255,28 +256,30 @@ data_frame.columns = ["rsid", "varID", "ref_allele", "eff_allele", "weight", "ge
   #(this will all be in the same order so we just need to figure out what this order is)
 #only pull columns of what the user wants
 
-user_specified_flags = []
-num_of_flags = len(extra_flags) + len(weights_flags) + len(sample_info_flags)
-for flag in extra_flags:
-    user_specified_flags.append(flag)
-for flag in weights_flags:
-    user_specified_flags.append(flag)
-for flag in sample_info_flags:
-    user_specified_flags.append(flag)
-if num_of_flags > 0:
-    data_frame_mod = data_frame.loc[user_specified_flags]
-else:
-    data_frame_mod = data_frame.loc["genename", "cv_r2_avg", "rsid", "weights"]
-    
 #restrict to thresholds the user wants (see threshold flags)
   #ex. if only want cv_r2_avg > 0.1, only keep those
    #(this will involve using a bunch of .loc)
 #To do this I will use the query_weight_vals array created above (-Shreya)
+
+if num_of_flags > 0:
+    data_frame_mod = data_frame.loc[user_specified_flags]
+else:
+    data_frame_mod = data_frame.loc["genename", "cv_r2_avg", "rsid", "weights"]
   
 #delete duplicate rows
+
 #print to csv
   #remove indexes cause they're annoying
   
 #additional ideas:
 #I want to do this with something like Beautifulsoup4 (-Shreya)
   #pull what the genes have been implicated in the GWAS catalog - https://www.ebi.ac.uk/gwas/downloads
+    
+'''
+NOTE TO READER FROM ANGELA:
+We decided to query all genes in the .db and then subsequently parse because:
+1. The Wheeler Lab machine has so much memory size isn't an issue
+2. Carlee seemed more comfortable with hardcoding than working with shifting variables
+3. It's easier to have two people work on stuff if the stuff remains the same instead of variable
+4. I'm more comfortable in Pandas than SQL
+'''
