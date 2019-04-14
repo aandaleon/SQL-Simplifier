@@ -152,33 +152,27 @@ pred_perf_pval_thres = args.pred_perf_pval_thres
 ########
 
 data = [] #List of lists .db files info to output for further pandas filtering and parsing
-#Note: Are we supposed to add .db file name to data list for pandas? Talk to Shreya later
-  #Angela: yes
 
-genename = NA
-rsid = NA
-varID = NA
-ref_allele = NA
-eff_allele= NA
-weight = NA
-n_snps_in_model = NA
-test_R2_avg = NA
-cv_R2_avg = NA
-rho_avg = NA
-rho_zscore = NA
-pred_perf_R2 = NA
-pred_perf_pval = NA
-n_samples = NA
-population = NA
-tissue = NA
+rsid = None
+varID = None
+ref_allele = None
+eff_allele= None
+weight = None
+n_snps_in_model = None
+test_R2_avg = None
+cv_R2_avg = None
+rho_avg = None
+rho_zscore = None
+pred_perf_R2 = None
+pred_perf_pval = None
+n_samples = None
+population = None
+tissue = None
 
 #dbs is a list containing strings that are addresses of the .db files
 for db in dbs: #dbs are in .dbs
     conn = sqlite3.connect(db) #We need to make a SQL connection to the database we are querying
     c = conn.cursor() #c connects to all the .db files
-    c.execute("select genename from extra;") #Angela: why genename? We need gene
-    for row in c:
-        genename = row[0]
     
     c.execute("select [n.snps.in.model], test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, [pred.perf.R2], [pred.perf.pval] from extra ;")
     for row in c:
@@ -190,30 +184,28 @@ for db in dbs: #dbs are in .dbs
         pred_perf_R2 = row[5]
         pred_perf_pval = row[6]
 
-    for gene in query_genes: #Angela: since we're doing all genes in Carlee's part this is unnecessary
-        c.execute("select gene from extra;")
-        for row in c:
-            gene = row[0]
-        #^Am I supposed to add this; Angela: we start with genes, not genenames
-        
+    c.execute('select n_samples, population, tissue from sample_info ;')
+    for row in c:
+        n_samples = row[0]
+        population = row[1]
+        tissue = row[2]
+    
+    for gene in query_genes:
         c.execute("select rsid, varID, ref_allele, eff_allele, weight from weights ;")
         for row in c:
             rsid = row[0]
             varID = row[1]
             ref_allele = row[2]
             eff_allele = row[3]
-            data.append([genename, gene, rsid, varID, ref_allele, eff_allele, weight, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred_perf_R2, pred_perf_pval, n_samples, population, tissue])
+            data.append([db[3:], gene, rsid, varID, ref_allele, eff_allele, weight, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred_perf_R2, pred_perf_pval, n_samples, population, tissue])
+            #Not sure if db name right?
+            #Also I got rid of genenames, go rid of querying gene stuff
 
-    
-    c.execute('select n_samples, population, tissue from sample_info ;')
-    for row in c:
-        n_samples = row[0]
-        population = row[1]
-        tissue = row[2]
 
 #Angela: switch the order of sample info flags and weights flags and do this command during the iterations of weights flags
-#Carlee: Wait why would we switch the order? Isn't the order I put it in close as I can get to what Shreya uses later on in data.frame columns?
-   
+#Carlee: By this do you mean the order of the for loops? That's what I did to address this comment
+
+
 print(data)
 conn.close()
 
