@@ -202,6 +202,7 @@ for db in dbs: #dbs are in .dbs
             varID = row[1]
             ref_allele = row[2]
             eff_allele = row[3]
+            data.append([genename, gene, rsid, varID, ref_allele, eff_allele, weight, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred_perf_R2, pred_perf_pval, n_samples, population, tissue])
 
     
     c.execute('select n_samples, population, tissue from sample_info ;')
@@ -211,7 +212,8 @@ for db in dbs: #dbs are in .dbs
         tissue = row[2]
 
 #Angela: switch the order of sample info flags and weights flags and do this command during the iterations of weights flags
-data.append([genename, gene, rsid, varID, ref_allele, eff_allele, weight, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred_perf_R2, pred_perf_pval, n_samples, population, tissue])
+#Carlee: Wait why would we switch the order? Isn't the order I put it in close as I can get to what Shreya uses later on in data.frame columns?
+   
 print(data)
 conn.close()
 
