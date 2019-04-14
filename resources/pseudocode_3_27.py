@@ -1,3 +1,5 @@
+#ALL ALGORITHMIC DESIGN AND PSUEDOCODE DONE BY ANGELA ANDALEON
+
 #this file can be run to take user input and pass it to the querying file
 
 #if the python script is run without any flags, just output genenames, cv_R2_avg, rsid, and weights (most common things we use)
