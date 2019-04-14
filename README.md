@@ -61,6 +61,7 @@ When the program is run without any parameters or gene lists, it will query ever
 
 ## Project summaries
 * [Project prompt](https://docs.google.com/presentation/d/1Xarn0oowpogUH9NmHpkTC-sKIEeIR__ac2_Azgp5Ilo/edit?usp=sharing)
+* [Design document](https://github.com/aandaleon/SQLite3-wrapper/wiki/Design-Document)
 * [Presentation 1](https://docs.google.com/presentation/d/1lDZIZd-aw6z8_7F-tAtBdKWFPR-5bLE_pI3pmGNPjFM/edit?usp=sharing)
 
 ## Quick background and resources
