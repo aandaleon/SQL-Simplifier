@@ -175,26 +175,27 @@ tissue = None
 for db in dbs: #dbs are in .dbs
     conn = sqlite3.connect(db) #We need to make a SQL connection to the database we are querying
     c = conn.cursor() #c connects to all the .db files
-    
+    query_db_genes = query_genes.copy() #specific to this iteration of running dbs (otherwise runs into issues)
+
     if args.genenames is not None: #translate gene names to ensembl ids
         query_genenames = []
-        for genename in query_genes:
+        for genename in query_db_genes:
             c.execute("select gene from extra where genename = '" + genename + "';")
             for row in c:
                 query_genenames.append(row[0])
-        query_genes = query_genenames
-    if len(query_genes) == 0: #if no query genes input, query all genes
+        query_db_genes = query_genenames
+    if len(query_db_genes) == 0: #if no query genes input, query all genes
         c.execute("select gene from extra;")
         for row in c:
-            query_genes.append(row[0])
-
+            query_db_genes.append(row[0])
+            
     c.execute("select n_samples, population, tissue from sample_info;") #model-level data
     for row in c:
         n_samples = row[0]
         population = row[1]
         tissue = row[2]        
         
-    for gene in query_genes:
+    for gene in query_db_genes:
         c.execute("select [n.snps.in.model], test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, [pred.perf.R2], [pred.perf.pval], genename from extra where gene = '" + gene + "';") #gene-level data
         for row in c:
             n_snps_in_model = row[0]
@@ -235,43 +236,4 @@ data_frame.columns = ["empty", "db", "gene", "rsid", "varID", "ref_allele", "eff
                       "cv_R2_avg", "rho_avg", "rho_zscore", "pred_perf_R2", "pred_perf_pval", "n_samples", "population", "tissue"] #give column names so user knows what they're looking at
   #replace empty in actual analysis
 
-#picks out user specified flags from data frame
-if len(query_flags) > 0:
-    data_frame_mod = data_frame.loc[query_flags]
-else:
-    query_flags = ["genename", "cv_r2_avg", "rsid", "weights"]
-    data_frame_mod = data_frame.loc[:, query_flags]
-#picks out user specified genes from dataframe
-data_frame_mod1 = data_frame_mod.loc[:, query_genes]
-#delete duplicate rows 
-#Shreya: What do you mean delete duplicate rows?
-
-#Threshold
-# dest = "test_R2_avg_thres", default = 0, help = "Restrict the test_R2_avg to values above this threshold. Default = 0.
-# "cv_R2_avg_thres", default = 0, help = "Restrict the cv_R2_avg to values above this threshold. Default = 0
-# "rho_avg_thres", default = 0, help = "Restrict the rho_avg to values above this threshold. Default = 0
-#"pred_perf_R2_thres", default = 0, help = "Restrict the test_R2_avg to values above this threshold. Default = 0.
-# "pred_perf_pval_thres", default = 1, help = "Restrict the pred_perf_pval to values below this threshold. Default = 1.
-if test_R2_avg_thres > 0:
-    data_frame_mod1["test_R2_avg"].clip(lower = test_R2_avg_thres)
-if cv_R2_avg_thres > 0:
-    data_frame_mod1["cv_R2_avg"].clip(lower = cv_R2_avg_thres)
-if rho_avg_thres > 0:
-    data_frame_mod1["rho_avg"].clip(lower = rho_avg_thres)
-if pred_perf_R2_thres > 0: 
-    data_frame_mod1["pred.perf.R2"].clip(lower = pred_perf_R2_thres)
-#What is the range of values that the user can put in for pred_perf_pval_thres
-if pred_perf_pval_thres < 1 : 
-    data_frame_mod1["pred.perf.pval"].clip(upper = pred_perf_pval_thres)
-#print to csv
-data_frame_mod1.to_csv(args.out_prefix + ".csv", na = "NA") #give user an option
-  #remove indexes cause they're annoying
-
-'''
-NOTE TO READER FROM ANGELA:
-We decided to query all genes in the .db and then subsequently parse because:
-1. The Wheeler Lab machine has so much memory size isn't an issue
-2. Carlee seemed more comfortable with hardcoding than working with shifting variables
-3. It's easier to have two people work on stuff if the stuff remains the same instead of variable
-4. I'm more comfortable in Pandas than SQL
-'''
+#picks out user spec
