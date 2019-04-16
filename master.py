@@ -140,7 +140,6 @@ else: #its (I assume) a folder
         print("No .db models were found in the input destination. Program exiting.")
         sys.exit(1)
     print("Models queried: " + ", ".join([_.replace(folder_name, "") for _ in dbs])) #no need to print the folder name multiple times
-print(dbs)
 
 #THRES FLAGS (for filtering later)
 test_R2_avg_thres = args.test_R2_avg_thres
@@ -189,7 +188,7 @@ for db in dbs: #dbs are in .dbs
         for row in c:
             query_genes.append(row[0])
     
-    c.execute("select [n.snps.in.model], test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, [pred.perf.R2], [pred.perf.pval] from extra;")
+    c.execute("select [n.snps.in.model], test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, [pred.perf.R2], [pred.perf.pval], genename from extra;")
     for row in c:
         n_snps_in_model = row[0]
         test_R2_avg = row[1]
@@ -198,6 +197,7 @@ for db in dbs: #dbs are in .dbs
         rho_zscore = row[4]
         pred_perf_R2 = row[5]
         pred_perf_pval = row[6]
+        genename = row[7]
 
     c.execute('select n_samples, population, tissue from sample_info;')
     for row in c:
@@ -212,14 +212,14 @@ for db in dbs: #dbs are in .dbs
             varID = row[1]
             ref_allele = row[2]
             eff_allele = row[3]
-            data.append([db, gene, rsid, varID, ref_allele, eff_allele, weight, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred_perf_R2, pred_perf_pval, n_samples, population, tissue])
+            data.append([db.split("/")[-1], gene, rsid, varID, ref_allele, eff_allele, weight, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred_perf_R2, pred_perf_pval, n_samples, population, tissue])
             #Not sure if db name right?
             #Also I got rid of genenames, go rid of querying gene stuff
 
 #Angela: switch the order of sample info flags and weights flags and do this command during the iterations of weights flags
 #Carlee: By this do you mean the order of the for loops? That's what I did to address this comment
 
-print(data)
+#print(data)
 conn.close()
 
 ########        
@@ -234,21 +234,22 @@ conn.close()
 #code to only keep the rows with those genes, correct?
   #Angela: yes, ask Carlee what she saved those as
 data_frame = pd.DataFrame(data) #make list of lists into dataframe
-data_frame.index = ["gene"]
-data_frame.columns = ["rsid", "varID", "ref_allele", "eff_allele", "weight", "genename", "gene_type", "alpha",
-               "n_snps_in_window", "n.snps.in.model", "lambda_min_mse", "test_R2_avg", "test_R2_sd", "cv_R2_avg",
-               "cv_R2_sd", "in_sample_R2","nested_cv_fisher_pval", "rho_avg", "rho_se", "rho_zscore", "pred.perf.R2",
-               "pred.perf.pval", "pred.perf.qval", "chromosome", "cv_seed", "n_samples", "population", "tissue"] #give column names so user knows what they're looking at
+data_frame.to_csv("test.csv")
+data_frame = pd.read_csv("test.csv")
 
-num_of_flags = len(query_flags)
+#data_frame.index = ["gene"] #by rsid, not gene
+data_frame.columns = ["empty", "db", "gene", "rsid", "varID", "ref_allele", "eff_allele", "weight", "test_R2_avg", 
+                      "cv_R2_avg", "rho_avg", "rho_zscore", "pred_perf_R2", "pred_perf_pval", "n_samples", "population", "tissue"] #give column names so user knows what they're looking at
+  #replace empty in actual analysis
 
 #picks out user specified flags from data frame
-if num_of_flags > 0:
+if len(query_flags) > 0:
     data_frame_mod = data_frame.loc[query_flags]
 else:
-    data_frame_mod = data_frame.loc["genename", "cv_r2_avg", "rsid", "weights"]
+    query_flags = ["genename", "cv_r2_avg", "rsid", "weights"]
+    data_frame_mod = data_frame.loc[:, query_flags]
 #picks out user specified genes from dataframe
-data_frame_mod1 = data_frame_mod.loc[query_genes]
+data_frame_mod1 = data_frame_mod.loc[:, query_genes]
 #delete duplicate rows 
 #Shreya: What do you mean delete duplicate rows?
 
@@ -270,9 +271,9 @@ if pred_perf_R2_thres > 0:
 if pred_perf_pval_thres < 1 : 
     data_frame_mod1["pred.perf.pval"].clip(upper = pred_perf_pval_thres)
 #print to csv
-data_frame_mod1.to_csv("path to folder")
+data_frame_mod1.to_csv("test.csv") #give user an option
   #remove indexes cause they're annoying
-  
+
 #additional ideas:
 #I want to do this with something like Beautifulsoup4 (-Shreya)
 #pull what the genes have been implicated in the GWAS catalog - https://www.ebi.ac.uk/gwas/downloads
