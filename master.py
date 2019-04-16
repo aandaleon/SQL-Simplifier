@@ -228,14 +228,9 @@ data_frame.columns = ["rsid", "varID", "ref_allele", "eff_allele", "weight", "ge
                "pred.perf.pval", "pred.perf.qval", "chromosome", "cv_seed", "n_samples", "population", "tissue"] #give column names so user knows what they're looking at
 
 #Angela: this is already called query_flags so its redundant
-user_specified_flags = []
-num_of_flags = len(extra_flags) + len(weights_flags) + len(sample_info_flags)
-for flag in extra_flags:
-    user_specified_flags.append(flag)
-for flag in weights_flags:
-    user_specified_flags.append(flag)
-for flag in sample_info_flags:
-    user_specified_flags.append(flag)
+
+num_of_flags = len(query_flags)
+
     
 #if user has flags 
   #get everything "true" the user wants
@@ -253,7 +248,7 @@ for flag in sample_info_flags:
 #To do this I will use the query_weight_vals array created above (-Shreya)
 
 if num_of_flags > 0:
-    data_frame_mod = data_frame.loc[user_specified_flags]
+    data_frame_mod = data_frame.loc[query_flags]
 else:
     data_frame_mod = data_frame.loc["genename", "cv_r2_avg", "rsid", "weights"]
   
