@@ -1,5 +1,6 @@
 #this file can be run to take user input and pass it to the querying file
 import argparse
+import csv
 import numpy as np
 import os
 import pandas as pd
@@ -172,6 +173,7 @@ population = None
 tissue = None
 
 #dbs is a list containing strings that are addresses of the .db files
+print("Beginning querying.")
 for db in dbs: #dbs are in .dbs
     conn = sqlite3.connect(db) #We need to make a SQL connection to the database we are querying
     c = conn.cursor() #c connects to all the .db files
@@ -216,6 +218,7 @@ for db in dbs: #dbs are in .dbs
             weight = row[4]
             data.append([db.split("/")[-1], gene, genename, rsid, varID, ref_allele, eff_allele, weight, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred_perf_R2, pred_perf_pval, n_samples, population, tissue])
     conn.close()
+print("Completed querying. Parsing SQL output.")
 
 ########        
 #SHREYA#
@@ -229,12 +232,39 @@ for db in dbs: #dbs are in .dbs
 #code to only keep the rows with those genes, correct?
   #Angela: yes, ask Carlee what she saved those as
 data_frame = pd.DataFrame(data) #make list of lists into dataframe
-data_frame.to_csv("test.csv")
-data_frame = pd.read_csv("test.csv")
+#data_frame.to_csv("test.csv")
+#data_frame = pd.read_csv("test.csv")
 
-#data_frame.index = ["gene"] #by rsid, not gene
-data_frame.columns = ["empty", "db", "gene", "rsid", "varID", "ref_allele", "eff_allele", "weight", "test_R2_avg", 
+data_frame.columns = ["db", "gene", "genename", "rsid", "varID", "ref_allele", "eff_allele", "weight", "test_R2_avg", 
                       "cv_R2_avg", "rho_avg", "rho_zscore", "pred_perf_R2", "pred_perf_pval", "n_samples", "population", "tissue"] #give column names so user knows what they're looking at
-  #replace empty in actual analysis
 
-#picks out user spec
+#subset through thresholds
+if test_R2_avg_thres > 0:
+    data_frame["test_R2_avg"].clip(lower = test_R2_avg_thres)
+if cv_R2_avg_thres > 0:
+    data_frame["cv_R2_avg"].clip(lower = cv_R2_avg_thres)
+if rho_avg_thres > 0:
+    data_frame["rho_avg"].clip(lower = rho_avg_thres)
+if pred_perf_R2_thres > 0: 
+    data_frame["pred.perf.R2"].clip(lower = pred_perf_R2_thres)
+if pred_perf_pval_thres < 1 : 
+    data_frame["pred.perf.pval"].clip(upper = pred_perf_pval_thres)
+
+#picks out user specified flags from data frame
+if len(query_flags) > 0:
+    data_frame = data_frame[[query_flags]]
+else:
+    data_frame = data_frame[["genename", "cv_R2_avg", "rsid", "weight"]]
+
+#print to csv
+data_frame.to_csv(args.out_prefix + ".csv", na_rep = "NA", index = False, quoting = csv.QUOTE_NONE) 
+print("Completed running SQL Simplifier. Have a nice day :).")  
+
+'''
+NOTE TO READER FROM ANGELA:
+We decided to query all genes in the .db and then subsequently parse because:
+1. The Wheeler Lab machine has so much memory size isn't an issue
+2. Carlee seemed more comfortable with hardcoding than working with shifting variables
+3. It's easier to have two people work on stuff if the stuff remains the same instead of variable
+4. I'm more comfortable in Pandas than SQL
+'''
