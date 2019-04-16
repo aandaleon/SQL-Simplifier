@@ -18,6 +18,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--db", type = str, action = "store", dest = "db", required = False, help = ".db you want to query.") #"db/gtex_v7_Whole_Blood_imputed_europeans_tw_0.5_signif.db"
 parser.add_argument("--genes", type = str, action = "store", dest = "genes", required = False, help = "File containing genes (Ensembl IDs) separated by line.") #"practice_python_queries/genenames.txt"
 parser.add_argument("--genenames", type = str, action = "store", dest = "genenames", required = False, help = "File containing gene names separated by line.") #"practice_python_queries/genenames.txt"
+parser.add_argument("--out_prefix", type = str, action = "store", dest = "out_prefix", required = False, default = "SQL_Simplifier_output", help = "Prefix of the output .csv file. Default = 'SQL_Simplifier_output'") #"practice_python_queries/genenames.txt"
 
 #boolean inputs
 #EXTRA
@@ -271,20 +272,8 @@ if pred_perf_R2_thres > 0:
 if pred_perf_pval_thres < 1 : 
     data_frame_mod1["pred.perf.pval"].clip(upper = pred_perf_pval_thres)
 #print to csv
-data_frame_mod1.to_csv("test.csv") #give user an option
+data_frame_mod1.to_csv(args.out_prefix + ".csv", na = "NA") #give user an option
   #remove indexes cause they're annoying
-
-#additional ideas:
-#I want to do this with something like Beautifulsoup4 (-Shreya)
-#pull what the genes have been implicated in the GWAS catalog - https://www.ebi.ac.uk/gwas/downloads
-#To do this we need to look at all the query genes and create a variable with a link to their url
-# query the website and return the html to the variable 'page'
-#page = urllib2.urlopen(quote_page)
-# parse the html using beautiful soup and store in variable `soup`
-#soup = BeautifulSoup(page, ‘html.parser’)
-# Take out the <div> of name and get its value
-#name_box = soup.find(‘h1’, attrs={‘class’: ‘name’})
-#name = name_box.text.strip() # strip() is used to remove starting and trailing
 
 '''
 NOTE TO READER FROM ANGELA:
