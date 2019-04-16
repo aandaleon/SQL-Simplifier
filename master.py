@@ -213,6 +213,7 @@ for db in dbs: #dbs are in .dbs
             varID = row[1]
             ref_allele = row[2]
             eff_allele = row[3]
+            weight = row[4]
             data.append([db.split("/")[-1], gene, genename, rsid, varID, ref_allele, eff_allele, weight, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred_perf_R2, pred_perf_pval, n_samples, population, tissue])
     conn.close()
 
