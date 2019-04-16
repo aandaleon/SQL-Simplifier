@@ -175,6 +175,15 @@ tissue = None
 for db in dbs: #dbs are in .dbs
     conn = sqlite3.connect(db) #We need to make a SQL connection to the database we are querying
     c = conn.cursor() #c connects to all the .db files
+    
+    if args.genenames is not None: #translate gene names to ensembl ids
+        query_genenames = []
+        for genename in query_genes:
+            c.execute("select gene from extra where genename = '" + genename + "';")
+            for row in c:
+                query_genenames.append(row[0])
+        query_genes = query_genenames
+                
     if len(query_genes) == 0: #if no query genes input, query all genes
         c.execute("select gene from extra;")
         for row in c:
