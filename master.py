@@ -268,7 +268,7 @@ data_frame_mod1.to_csv("path to folder")
 #I want to do this with something like Beautifulsoup4 (-Shreya)
 #pull what the genes have been implicated in the GWAS catalog - https://www.ebi.ac.uk/gwas/downloads
 #To do this we need to look at all the query genes and create a variable with a link to their url
-# query the website and return the html to the variable ‘page’
+# query the website and return the html to the variable 'page'
 #page = urllib2.urlopen(quote_page)
 # parse the html using beautiful soup and store in variable `soup`
 #soup = BeautifulSoup(page, ‘html.parser’)
