@@ -183,16 +183,19 @@ for db in dbs: #dbs are in .dbs
             for row in c:
                 query_genenames.append(row[0])
         query_genes = query_genenames
-                
     if len(query_genes) == 0: #if no query genes input, query all genes
         c.execute("select gene from extra;")
         for row in c:
             query_genes.append(row[0])
-    
-    print(", ".join(query_genes))
 
+    c.execute("select n_samples, population, tissue from sample_info;") #model-level data
+        for row in c:
+            n_samples = row[0]
+            population = row[1]
+            tissue = row[2]        
+        
     for gene in query_genes:
-        c.execute("select [n.snps.in.model], test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, [pred.perf.R2], [pred.perf.pval], genename from extra where gene = '" + gene + "';")
+        c.execute("select [n.snps.in.model], test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, [pred.perf.R2], [pred.perf.pval], genename from extra where gene = '" + gene + "';") #gene-level data
         for row in c:
             n_snps_in_model = row[0]
             test_R2_avg = row[1]
@@ -203,13 +206,7 @@ for db in dbs: #dbs are in .dbs
             pred_perf_pval = row[6]
             genename = row[7]
 
-        c.execute("select n_samples, population, tissue from sample_info where gene = '" + gene + "';")
-        for row in c:
-            n_samples = row[0]
-            population = row[1]
-            tissue = row[2]        
-        
-        c.execute("select rsid, varID, ref_allele, eff_allele, weight from weights where gene = '" + gene + "';")
+        c.execute("select rsid, varID, ref_allele, eff_allele, weight from weights where gene = '" + gene + "';") #SNP-level data
         for row in c:
             rsid = row[0]
             varID = row[1]
