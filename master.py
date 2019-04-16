@@ -189,39 +189,34 @@ for db in dbs: #dbs are in .dbs
         for row in c:
             query_genes.append(row[0])
     
-    c.execute("select [n.snps.in.model], test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, [pred.perf.R2], [pred.perf.pval], genename from extra;")
-    for row in c:
-        n_snps_in_model = row[0]
-        test_R2_avg = row[1]
-        cv_R2_avg = row[2]
-        rho_avg = row[3]
-        rho_zscore = row[4]
-        pred_perf_R2 = row[5]
-        pred_perf_pval = row[6]
-        genename = row[7]
+    print(", ".join(query_genes))
 
-    c.execute('select n_samples, population, tissue from sample_info;')
-    for row in c:
-        n_samples = row[0]
-        population = row[1]
-        tissue = row[2]
-    
     for gene in query_genes:
-        c.execute("select rsid, varID, ref_allele, eff_allele, weight from weights;")
+        c.execute("select [n.snps.in.model], test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, [pred.perf.R2], [pred.perf.pval], genename from extra where gene = '" + gene + "';")
+        for row in c:
+            n_snps_in_model = row[0]
+            test_R2_avg = row[1]
+            cv_R2_avg = row[2]
+            rho_avg = row[3]
+            rho_zscore = row[4]
+            pred_perf_R2 = row[5]
+            pred_perf_pval = row[6]
+            genename = row[7]
+
+        c.execute("select n_samples, population, tissue from sample_info where gene = '" + gene + "';")
+        for row in c:
+            n_samples = row[0]
+            population = row[1]
+            tissue = row[2]        
+        
+        c.execute("select rsid, varID, ref_allele, eff_allele, weight from weights where gene = '" + gene + "';")
         for row in c:
             rsid = row[0]
             varID = row[1]
             ref_allele = row[2]
             eff_allele = row[3]
             data.append([db.split("/")[-1], gene, genename, rsid, varID, ref_allele, eff_allele, weight, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred_perf_R2, pred_perf_pval, n_samples, population, tissue])
-            #Not sure if db name right?
-            #Also I got rid of genenames, go rid of querying gene stuff
-
-#Angela: switch the order of sample info flags and weights flags and do this command during the iterations of weights flags
-#Carlee: By this do you mean the order of the for loops? That's what I did to address this comment
-
-#print(data)
-conn.close()
+    conn.close()
 
 ########        
 #SHREYA#
