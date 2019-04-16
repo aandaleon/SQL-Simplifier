@@ -1,31 +1,44 @@
-##In the terminal, will have to type:
-
+1) IN TERMINAL, WILL HAVE TO TYPE:
 easy_install pip  
 pip install BeautifulSoup4
 
-HTML tags
-If you already understand HTML tags, feel free to skip this part.
+2) HTML TAGS REVIEW
+Basic HTML Webpage syntax:
+    <!DOCTYPE html>  
+    <html>  
+        <head>
+        </head>
+        <body>
+            <h1> First Scraping </h1>
+            <p> Hello World </p>
+        <body>
+    </html>
+    a. <!DOCTYPE html>: HTML docs start with a type declaration.
+    b. The HTML document is contained between <html> and </html>.
+    c. The meta and script declaration of the HTML document is between <head> and </head>.
+    d. The visible part of the HTML document is between <body> and </body> tags.
+    e. Title headings are defined with the <h1> through <h6> tags.
+    f. Paragraphs are defined with the <p> tag.
+    g. Other useful tags include <a> for hyperlinks, <table> for tables, <tr> for table rows, and <td> for table columns.
+    
+3) IMPORTING LIBRARIES
+import urllib2
+from bs4 import BeautifulSoup
 
-<!DOCTYPE html>  
-<html>  
-    <head>
-    </head>
-    <body>
-        <h1> First Scraping </h1>
-        <p> Hello World </p>
-    <body>
-</html>
-This is the basic syntax of an HTML webpage. Every <tag> serves a block inside the webpage:
-1. <!DOCTYPE html>: HTML documents must start with a type declaration.
-2. The HTML document is contained between <html> and </html>.
-3. The meta and script declaration of the HTML document is between <head> and </head>.
-4. The visible part of the HTML document is between <body> and </body> tags.
-5. Title headings are defined with the <h1> through <h6> tags.
-6. Paragraphs are defined with the <p> tag.
+4) SPECIFY THE URL
+quote_page = 'http://amigo.geneontology.org/amigo/term/GO:0071828'
 
-Other useful tags include <a> for hyperlinks, <table> for tables, <tr> for table rows, and <td> for table columns.
+5) QUERY THE WEBSITE AND RETURN HTML TO THE VARIABLE PAGE
+page = urllib2.urlopen(quote_page)
 
-Also, HTML tags sometimes come with id or class attributes. The id attribute specifies a unique id for an HTML tag and the value must be unique within the HTML document. The class attribute is used to define equal styles for HTML tags with the same class. We can make use of these ids and classes to help us locate the data we want.
+6) PARSE HTML USING BEAUTIFUL SOUP AND STORE IN THE VARIABLE SOUP
+soup = BeautifulSoup(page, ‘html.parser’)
 
-For more information on HTML tags, id and class, please refer to W3Schools Tutorials.
+7) USING FIND EXTRACT INFO FROM WEBPAGE
+# Take out the <div> of name and get its value
+name_box = soup.find(‘h1’, attrs={‘class’: ‘name’}
 
+8) GETTING TEXT DATA
+#Now that we have specified a tag we can get the text
+name = name_box.text.strip() 
+print name
