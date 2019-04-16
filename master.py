@@ -255,6 +255,7 @@ if len(query_flags) > 0:
     data_frame = data_frame[[query_flags]]
 else:
     data_frame = data_frame[["genename", "cv_R2_avg", "rsid", "weight"]]
+data_frame = data_frame.drop_duplicates() #remove duplicate rows
 
 #print to csv
 data_frame.to_csv(args.out_prefix + ".csv", na_rep = "NA", index = False, quoting = csv.QUOTE_NONE) 
