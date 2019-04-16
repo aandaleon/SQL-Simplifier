@@ -60,11 +60,13 @@ if args.db is None:
 ###GENES, GENENAMES
 if args.genes is None and args.genenames is None:
     print("No list of genes has been supplied with --genes or --genenames. All genes in the model(s) will be queried.")
+    query_genes = []
 elif args.genes is not None and args.genenames is not None:
     print("Please select an input for only genes or only genenames and not both.")
+    sys.exit(1)
 elif args.genes is not None:
     query_genes = list(np.loadtxt(args.genes, dtype = "str", ndmin = 1))
-else:# args.genenames is not None:
+elif args.genenames is not None:
     query_genes = list(np.loadtxt(args.genenames, dtype = "str", ndmin = 1))
 
 ###EXTRA
@@ -173,8 +175,12 @@ tissue = None
 for db in dbs: #dbs are in .dbs
     conn = sqlite3.connect(db) #We need to make a SQL connection to the database we are querying
     c = conn.cursor() #c connects to all the .db files
+    if len(query_genes) == 0: #if no query genes input, query all genes
+        c.execute("select gene from extra;")
+        for row in c:
+            query_genes.append(row[0])
     
-    c.execute("select [n.snps.in.model], test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, [pred.perf.R2], [pred.perf.pval] from extra ;")
+    c.execute("select [n.snps.in.model], test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, [pred.perf.R2], [pred.perf.pval] from extra;")
     for row in c:
         n_snps_in_model = row[0]
         test_R2_avg = row[1]
@@ -184,27 +190,25 @@ for db in dbs: #dbs are in .dbs
         pred_perf_R2 = row[5]
         pred_perf_pval = row[6]
 
-    c.execute('select n_samples, population, tissue from sample_info ;')
+    c.execute('select n_samples, population, tissue from sample_info;')
     for row in c:
         n_samples = row[0]
         population = row[1]
         tissue = row[2]
     
     for gene in query_genes:
-        c.execute("select rsid, varID, ref_allele, eff_allele, weight from weights ;")
+        c.execute("select rsid, varID, ref_allele, eff_allele, weight from weights;")
         for row in c:
             rsid = row[0]
             varID = row[1]
             ref_allele = row[2]
             eff_allele = row[3]
-            data.append([db[3:], gene, rsid, varID, ref_allele, eff_allele, weight, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred_perf_R2, pred_perf_pval, n_samples, population, tissue])
+            data.append([db, gene, rsid, varID, ref_allele, eff_allele, weight, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred_perf_R2, pred_perf_pval, n_samples, population, tissue])
             #Not sure if db name right?
             #Also I got rid of genenames, go rid of querying gene stuff
 
-
 #Angela: switch the order of sample info flags and weights flags and do this command during the iterations of weights flags
 #Carlee: By this do you mean the order of the for loops? That's what I did to address this comment
-
 
 print(data)
 conn.close()
