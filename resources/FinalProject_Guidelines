@@ -1,0 +1,28 @@
+1) Presentation
+- 10-12 minutes in length (and you will be cut off at 12)
+- 5 minutes for Q&A
+    Outline:
+    Introduce the solution developed highlighting the differences/similarities to existing solutions
+    Results of your tests with real data
+    Run-time & memory usage (big O, clock time, RAM/HD usage)
+    Conclusions: when should you use the tool, limitations, future developments
+    
+2) Project (code)
+- GitHub
+- DOCUMENTATION
+- Sample data
+- Anyone (Dr.Putonti) should be able to download/clone, install and get it to run through the sample/test data
+- The majority of your points here rely on the functionality. If I can’t run it, no points.
+
+3) Application Note
+***We can submit a draft via Sakai by 4:15 on 4/23 for feedback.
+- 1000-1300 words + 1 figure/table [I stop reading at 1300 words]
+- Headings:
+    Abstract (not included in the word count; 100-200 words)
+    Introduction: introduce the problem and existing software tools
+    Implementation: details about the development of the application in English
+    NOTE: Don’t list or even name any functions in this paper
+    This section includes run-time and memory usage estimates
+    Results: actual use of the software on the data. The same set of data must be analyzed by OTHER available tools or statistical models. There must be some comparison to show that your tool/solution is superior (or at least on par) with other tools/solutions.
+    References: see details in the syllabus re: the formatting.
+
