@@ -6,6 +6,8 @@ import os
 import pandas as pd
 import sys
 import sqlite3
+import warnings
+warnings.simplefilter(action='ignore', category = FutureWarning) #pandas is picky about .loc
 
 ########
 #ANGELA#
@@ -16,12 +18,17 @@ parser = argparse.ArgumentParser()
 
 #string inputs
 #if none, query all available
-parser.add_argument("--db", type = str, action = "store", dest = "db", required = False, help = ".db you want to query.") #"db/gtex_v7_Whole_Blood_imputed_europeans_tw_0.5_signif.db"
+parser.add_argument("--dbs", type = str, action = "store", dest = "dbs", required = False, help = ".db you want to query.") #"db/gtex_v7_Whole_Blood_imputed_europeans_tw_0.5_signif.db"
 parser.add_argument("--genes", type = str, action = "store", dest = "genes", required = False, help = "File containing genes (Ensembl IDs) separated by line.") #"practice_python_queries/genenames.txt"
 parser.add_argument("--genenames", type = str, action = "store", dest = "genenames", required = False, help = "File containing gene names separated by line.") #"practice_python_queries/genenames.txt"
 parser.add_argument("--out_prefix", type = str, action = "store", dest = "out_prefix", required = False, default = "SQL_Simplifier_output", help = "Prefix of the output .csv file. Default = 'SQL_Simplifier_output'") #"practice_python_queries/genenames.txt"
 
 #boolean inputs
+#include db, gene, genename columns
+parser.add_argument("--db_col", action = "store_true", dest = "db_col", default = False, help = "Output the column of .db file of origin.")
+parser.add_argument("--gene_col", action = "store_true", dest = "gene_col", default = False, help = "Output the column of genes (Ensembl IDs).")
+parser.add_argument("--genename_col", action = "store_true", dest = "genename_col", default = False, help = "Output the column of gene names.")
+
 #EXTRA
 parser.add_argument("--n.snps.in.model", action = "store_true", dest = "n_snps_in_model", default = False, help = "Output the number of SNPs within the cis window that have non-zero weights, as found by elastic-net.")
 parser.add_argument("--test_R2_avg", action = "store_true", dest = "test_R2_avg", default = False, help = "Output the average coefficient of determination when predicting values of the hold out fold during nested cross validation.")
@@ -53,9 +60,7 @@ parser.add_argument("--pred.perf.pval_thres", type = float, dest = "pred_perf_pv
 args = parser.parse_args() #then pass these arguments to further things
 
 ###INPUT SANITATION
-#List of dbs holds addresses to .db files user wants to query
-
-if args.db is None:
+if args.dbs is None:
     print("No .db destination detected. Please input a .db destination using the --db flag.")
     sys.exit(1)
 
@@ -70,6 +75,15 @@ elif args.genes is not None:
     query_genes = list(np.loadtxt(args.genes, dtype = "str", ndmin = 1))
 elif args.genenames is not None:
     query_genes = list(np.loadtxt(args.genenames, dtype = "str", ndmin = 1))
+
+###COLS
+col_flags = []
+if args.db_col:
+    col_flags.append("db")
+if args.gene_col:
+    col_flags.append("gene")
+if args.genename_col:
+    col_flags.append("genename")
 
 ###EXTRA
 extra_flags = [] #store the flags the user passes
@@ -87,8 +101,7 @@ if args.pred_perf_R2:
     extra_flags.append("pred.perf.R2")
 if args.pred_perf_pval:
     extra_flags.append("pred.perf.pval")
-#print(extra_flags)
-  
+
 ###WEIGHTS
 weights_query = False #default to not query weights
 weights_flags = []
@@ -115,22 +128,22 @@ if args.tissue:
     sample_info_flags.append("tissue")
 
 #make sure the user gets what they want
-query_flags = extra_flags + weights_flags + sample_info_flags
+query_flags = col_flags + extra_flags + weights_flags + sample_info_flags
 if len(query_flags) == 0:
     print("No query flags have been passed. Program will output cv_R2_avg, rsid, and weights of all genes in the input models.")
 else: 
     print("Flags queried: " + ", ".join(query_flags))
 
 #making input .dbs into a list
-args_db = args.db #.endswith doesn't like arguments
-if args_db.endswith(".db"): #its a single .db file
-    dbs = [(args_db)]
-    print("Model queried: " + args_db.split("/")[-1]) #don't print the full path
+args_dbs = args.dbs #.endswith doesn't like arguments
+if args_dbs.endswith(".db"): #its a single .db file
+    dbs = [(args_dbs)]
+    print("Model queried: " + args_dbs.split("/")[-1]) #don't print the full path
 else: #its (I assume) a folder
-    if args_db.endswith("/"):
-        folder_name = args_db
+    if args_dbs.endswith("/"):
+        folder_name = args_dbs
     else:
-        folder_name = args_db + "/"
+        folder_name = args_dbs + "/"
     dbs = []
     if not os.path.exists(folder_name):
         print("The .db path is invalid. Please input a valid .db path.")
@@ -155,7 +168,6 @@ pred_perf_pval_thres = args.pred_perf_pval_thres
 ########
 
 data = [] #List of lists .db files info to output for further pandas filtering and parsing
-
 rsid = None
 varID = None
 ref_allele = None
@@ -172,11 +184,10 @@ n_samples = None
 population = None
 tissue = None
 
-#dbs is a list containing strings that are addresses of the .db files
 print("Beginning querying.")
-for db in dbs: #dbs are in .dbs
-    conn = sqlite3.connect(db) #We need to make a SQL connection to the database we are querying
-    c = conn.cursor() #c connects to all the .db files
+for db in dbs:
+    conn = sqlite3.connect(db) 
+    c = conn.cursor()
     query_db_genes = query_genes.copy() #specific to this iteration of running dbs (otherwise runs into issues)
 
     if args.genenames is not None: #translate gene names to ensembl ids
@@ -216,7 +227,7 @@ for db in dbs: #dbs are in .dbs
             ref_allele = row[2]
             eff_allele = row[3]
             weight = row[4]
-            data.append([db.split("/")[-1], gene, genename, rsid, varID, ref_allele, eff_allele, weight, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred_perf_R2, pred_perf_pval, n_samples, population, tissue])
+            data.append([db.split("/")[-1], gene, genename, n_samples, population, tissue, n_snps_in_model, test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, pred_perf_R2, pred_perf_pval, rsid, varID, ref_allele, eff_allele, weight])
     conn.close()
 print("Completed querying. Parsing SQL output.")
 
@@ -224,37 +235,26 @@ print("Completed querying. Parsing SQL output.")
 #SHREYA#
 ########
 
-###PARSING QUERY OUTPUT
-#alright so we're done querying shiz and we got a big boi list of lists
-#convert list of lists into dataframe
-
-#Don't we need to take in the genes that the user wants to query? Once we do that, I would add a line of code to the flag retrieving
-#code to only keep the rows with those genes, correct?
-  #Angela: yes, ask Carlee what she saved those as
 data_frame = pd.DataFrame(data) #make list of lists into dataframe
-#data_frame.to_csv("test.csv")
-#data_frame = pd.read_csv("test.csv")
-
-data_frame.columns = ["db", "gene", "genename", "rsid", "varID", "ref_allele", "eff_allele", "weight", "test_R2_avg", 
-                      "cv_R2_avg", "rho_avg", "rho_zscore", "pred_perf_R2", "pred_perf_pval", "n_samples", "population", "tissue"] #give column names so user knows what they're looking at
+data_frame.columns = ["db", "gene", "genename", "n_samples", "population", "tissue", "n.snps.in.model", "test_R2_avg", "cv_R2_avg", "rho_avg", "rho_zscore", "pred.perf.R2", "pred.perf.pval", "rsid", "varID", "ref_allele", "eff_allele", "weight"] #give column names so user knows what they're looking at
 
 #subset through thresholds
 if test_R2_avg_thres > 0:
-    data_frame["test_R2_avg"].clip(lower = test_R2_avg_thres)
+    data_frame = data_frame.loc[data_frame['test_R2_avg'] > test_R2_avg_thres]
 if cv_R2_avg_thres > 0:
-    data_frame["cv_R2_avg"].clip(lower = cv_R2_avg_thres)
+    data_frame = data_frame.loc[data_frame['cv_R2_avg'] > cv_R2_avg_thres]
 if rho_avg_thres > 0:
-    data_frame["rho_avg"].clip(lower = rho_avg_thres)
+    data_frame = data_frame.loc[data_frame['rho_avg'] > rho_avg_thres]
 if pred_perf_R2_thres > 0: 
-    data_frame["pred.perf.R2"].clip(lower = pred_perf_R2_thres)
-if pred_perf_pval_thres < 1 : 
-    data_frame["pred.perf.pval"].clip(upper = pred_perf_pval_thres)
+    data_frame = data_frame.loc[data_frame['pred.perf.R2'] > pred_perf_R2_thres]
+if pred_perf_pval_thres < 1: 
+    data_frame = data_frame.loc[data_frame['pred.perf.pval'] > pred_perf_pval_thres]
 
 #picks out user specified flags from data frame
 if len(query_flags) > 0:
-    data_frame = data_frame[[query_flags]]
+    data_frame = data_frame.loc[:, query_flags]
 else:
-    data_frame = data_frame[["genename", "cv_R2_avg", "rsid", "weight"]]
+    data_frame = data_frame.loc[:, ["db", "gene", "genename", "cv_R2_avg", "rsid", "weight"]]
 data_frame = data_frame.drop_duplicates() #remove duplicate rows
 
 #print to csv
