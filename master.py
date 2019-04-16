@@ -189,10 +189,10 @@ for db in dbs: #dbs are in .dbs
             query_genes.append(row[0])
 
     c.execute("select n_samples, population, tissue from sample_info;") #model-level data
-        for row in c:
-            n_samples = row[0]
-            population = row[1]
-            tissue = row[2]        
+    for row in c:
+        n_samples = row[0]
+        population = row[1]
+        tissue = row[2]        
         
     for gene in query_genes:
         c.execute("select [n.snps.in.model], test_R2_avg, cv_R2_avg, rho_avg, rho_zscore, [pred.perf.R2], [pred.perf.pval], genename from extra where gene = '" + gene + "';") #gene-level data
