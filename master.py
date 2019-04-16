@@ -227,32 +227,17 @@ data_frame.columns = ["rsid", "varID", "ref_allele", "eff_allele", "weight", "ge
                "cv_R2_sd", "in_sample_R2","nested_cv_fisher_pval", "rho_avg", "rho_se", "rho_zscore", "pred.perf.R2",
                "pred.perf.pval", "pred.perf.qval", "chromosome", "cv_seed", "n_samples", "population", "tissue"] #give column names so user knows what they're looking at
 
-#Angela: this is already called query_flags so its redundant
-
 num_of_flags = len(query_flags)
 
-    
-#if user has flags 
-  #get everything "true" the user wants
-    #always include genename
-    #ex. if they want cv_r2_avg, rho_avg, and rsid, make a list of ["genename", "cv_r2_avg", "rho_avg", "rsid"]
-#if user has no flags
-  #genename, cv_r2_avg, rs, and weights
-#give column names
-  #(this will all be in the same order so we just need to figure out what this order is)
-#only pull columns of what the user wants
-
-#restrict to thresholds the user wants (see threshold flags)
-  #ex. if only want cv_r2_avg > 0.1, only keep those
-   #(this will involve using a bunch of .loc)
-#To do this I will use the query_weight_vals array created above (-Shreya)
-
+#picks out user specified flags from data frame
 if num_of_flags > 0:
     data_frame_mod = data_frame.loc[query_flags]
 else:
     data_frame_mod = data_frame.loc["genename", "cv_r2_avg", "rsid", "weights"]
-  
-#delete duplicate rows
+#picks out user specified genes from dataframe
+data_frame_mod1 = data_frame_mod.loc[query_genes]
+#delete duplicate rows 
+#Shreya: What fo you mean delete duplicate rows
 
 #print to csv
   #remove indexes cause they're annoying
