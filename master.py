@@ -254,7 +254,7 @@ if rho_avg_thres > 0:
 if pred_perf_R2_thres > 0: 
     data_frame_mod1["pred.perf.R2"].clip(lower = pred_perf_R2_thres)
 #What is the range of values that the user can put in for pred_perf_pval_thres
-if pred_perf_pval_thres > 0: 
+if pred_perf_pval_thres < 1 : 
     data_frame_mod1["pred.perf.pval"].clip(upper = pred_perf_pval_thres)
 #print to csv
 data_frame_mod1.to_csv("path to folder")
