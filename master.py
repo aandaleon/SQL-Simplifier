@@ -237,8 +237,24 @@ else:
 #picks out user specified genes from dataframe
 data_frame_mod1 = data_frame_mod.loc[query_genes]
 #delete duplicate rows 
-#Shreya: What fo you mean delete duplicate rows
+#Shreya: What do you mean delete duplicate rows?
 
+#Threshold
+# dest = "test_R2_avg_thres", default = 0, help = "Restrict the test_R2_avg to values above this threshold. Default = 0.
+# "cv_R2_avg_thres", default = 0, help = "Restrict the cv_R2_avg to values above this threshold. Default = 0
+# "rho_avg_thres", default = 0, help = "Restrict the rho_avg to values above this threshold. Default = 0
+#"pred_perf_R2_thres", default = 0, help = "Restrict the test_R2_avg to values above this threshold. Default = 0.
+# "pred_perf_pval_thres", default = 1, help = "Restrict the pred_perf_pval to values below this threshold. Default = 1.
+if test_R2_avg_thres > 0:
+    data_frame_mod1["test_R2_avg"].clip(lower = test_R2_avg_thres)
+if cv_R2_avg_thres > 0:
+    data_frame_mod1["cv_R2_avg"].clip(lower = cv_R2_avg_thres)
+if rho_avg_thres > 0:
+    data_frame_mod1["rho_avg"].clip(lower = rho_avg_thres)
+if pred_perf_R2_thres > 0: 
+    data_frame_mod1["pred.perf.R2"].clip(lower = pred_perf_R2_thres)
+#What is the range of values that the user can put in for pred_perf_pval_thres
+if pred_perf_pval_thres > 0: 
 #print to csv
   #remove indexes cause they're annoying
   
