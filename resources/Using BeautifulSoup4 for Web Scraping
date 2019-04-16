@@ -1,0 +1,31 @@
+##In the terminal, will have to type:
+
+easy_install pip  
+pip install BeautifulSoup4
+
+HTML tags
+If you already understand HTML tags, feel free to skip this part.
+
+<!DOCTYPE html>  
+<html>  
+    <head>
+    </head>
+    <body>
+        <h1> First Scraping </h1>
+        <p> Hello World </p>
+    <body>
+</html>
+This is the basic syntax of an HTML webpage. Every <tag> serves a block inside the webpage:
+1. <!DOCTYPE html>: HTML documents must start with a type declaration.
+2. The HTML document is contained between <html> and </html>.
+3. The meta and script declaration of the HTML document is between <head> and </head>.
+4. The visible part of the HTML document is between <body> and </body> tags.
+5. Title headings are defined with the <h1> through <h6> tags.
+6. Paragraphs are defined with the <p> tag.
+
+Other useful tags include <a> for hyperlinks, <table> for tables, <tr> for table rows, and <td> for table columns.
+
+Also, HTML tags sometimes come with id or class attributes. The id attribute specifies a unique id for an HTML tag and the value must be unique within the HTML document. The class attribute is used to define equal styles for HTML tags with the same class. We can make use of these ids and classes to help us locate the data we want.
+
+For more information on HTML tags, id and class, please refer to W3Schools Tutorials.
+
