@@ -28,12 +28,20 @@ Open a terminal session and enter: `git clone https://github.com/aandaleon/SQLit
 When the program is run without any parameters or gene lists, it will query every gene in a model and output `db`, `gene`, `genename`, `cv_R2_avg`, `rsid`, and `weight`, the most common metrics utilized by the Wheeler lab. Default output will be in `SQL_Simplifier_output.csv`
 
 ## Example
-#### Query a list of genes in a folder of .db files without any query flags (will output `db`, `gene`, `genename`, `cv_R2_avg`, `rsid`, and `weight` into `SQL_Simplifier_output.csv`)
+#### Query a list of genes in a folder of .db files without any query flags (will output into `SQL_Simplifier_output.csv`)
   * `python3 master.py --dbs example_data/ --genenames example_data/genenames.txt`
+
+##### `SQL_Simplifier_output.csv`
+| db                                                     | gene               | genename | cv_R2_avg          | rsid        | weight               |
+|--------------------------------------------------------|--------------------|----------|--------------------|-------------|----------------------|
+| gtex_v7_Whole_Blood_imputed_europeans_tw_0.5_signif.db | ENSG00000130203.5  | APOE     | 0.0135600336620361 | rs2356537   | -0.151237337241466   |
+| gtex_v7_Whole_Blood_imputed_europeans_tw_0.5_signif.db | ENSG00000130203.5  | APOE     | 0.0135600336620361 | rs11668687  | -0.00241744847729031 |
+| gtex_v7_Whole_Blood_imputed_europeans_tw_0.5_signif.db | ENSG00000130203.5  | APOE     | 0.0135600336620361 | rs11673170  | -0.00232453795322572 |
 
 #### Query all genes in a single .db file and their `genename`, `cv_R2_avg`, `n.snps.in.model`, and `pred.perf.R2`, outputting into `gene_info.csv`
   * `python3 master.py --dbs example_data/AFA_imputed_10_peer_3_pcs_v2.db --cv_R2_avg --n.snps.in.model --pred.perf.R2 --out_prefix gene_info`
 
+##### `gene_info.csv`
 | genename | n.snps.in.model | cv_R2_avg          | pred.perf.R2       |
 |----------|-----------------|--------------------|--------------------|
 | FUCA2    | 21              | 0.219505222129763  | 0.239011989288677  |
@@ -42,6 +50,13 @@ When the program is run without any parameters or gene lists, it will query ever
 
 #### Query all genes in a single .db file with cv_R2_avg > 0.1 and their genenames, cv_R2_avg, rsids, weights, outputting into `cv_R2_avg_0.1.csv`
   * `python3 master.py --dbs example_data/gtex_v7_Whole_Blood_imputed_europeans_tw_0.5_signif.db --genename_col --cv_R2_avg --rsid --weight --cv_R2_avg_thres 0.1 --out_prefix cv_R2_avg_0.1`
+
+##### `cv_R2_avg_0.1.csv`
+| genename     | cv_R2_avg         | rsid       | weight                |
+|--------------|-------------------|------------|-----------------------|
+| ISG15        | 0.154111838799616 | rs1058161  | -0.11337283758081     |
+| ISG15        | 0.154111838799616 | rs11804831 | -0.0126092887627783   |
+| ISG15        | 0.154111838799616 | rs2477782  | -0.0644525079361206   |
 
 ## Program options
 * **Input files**
