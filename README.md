@@ -25,10 +25,23 @@ Open a terminal session and enter: `git clone https://github.com/aandaleon/SQLit
 * List of gene names, one per row
 * Flags containing the information you want queried (see Program options)
 
-When the program is run without any parameters or gene lists, it will query every gene in a model and output `cv_R2_avg`, `rsid`, and `weight`, the most common metrics utilized by the Wheeler lab.
+When the program is run without any parameters or gene lists, it will query every gene in a model and output `db`, `gene`, `genename`, `cv_R2_avg`, `rsid`, and `weight`, the most common metrics utilized by the Wheeler lab. Default output will be in `SQL_Simplifier_output.csv`
 
 ## Example
-**have one example that has a list of genes, one that queries all in a db file, and one that doesn't query weights**
+#### Query a list of genes in a folder of .db files without any query flags (will output `db`, `gene`, `genename`, `cv_R2_avg`, `rsid`, and `weight` into `SQL_Simplifier_output.csv`)
+  * `python3 master.py --dbs example_data/ --genenames example_data/genenames.txt`
+
+#### Query all genes in a single .db file and their `genename`, `cv_R2_avg`, `n.snps.in.model`, and `pred.perf.R2`, outputting into `gene_info.csv`
+  * `python3 master.py --dbs example_data/AFA_imputed_10_peer_3_pcs_v2.db --cv_R2_avg --n.snps.in.model --pred.perf.R2 --out_prefix gene_info`
+
+| genename | n.snps.in.model | cv_R2_avg          | pred.perf.R2       |
+|----------|-----------------|--------------------|--------------------|
+| FUCA2    | 21              | 0.219505222129763  | 0.239011989288677  |
+| ENPP4    | 82              | 0.396811312007829  | 0.411548308924569  |
+| ANKIB1   | 26              | 0.0961397809054118 | 0.0890519595368423 |
+
+#### Query all genes in a single .db file with cv_R2_avg > 0.1 and their genenames, cv_R2_avg, rsids, weights, outputting into `cv_R2_avg_0.1.csv`
+  * `python3 master.py --dbs example_data/gtex_v7_Whole_Blood_imputed_europeans_tw_0.5_signif.db --genename_col --cv_R2_avg --rsid --weight --cv_R2_avg_thres 0.1 --out_prefix cv_R2_avg_0.1`
 
 ## Program options
 * **Input files**
