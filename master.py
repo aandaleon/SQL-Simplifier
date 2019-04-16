@@ -255,13 +255,23 @@ if pred_perf_R2_thres > 0:
     data_frame_mod1["pred.perf.R2"].clip(lower = pred_perf_R2_thres)
 #What is the range of values that the user can put in for pred_perf_pval_thres
 if pred_perf_pval_thres > 0: 
+    data_frame_mod1["pred.perf.pval"].clip(upper = pred_perf_pval_thres)
 #print to csv
+data_frame_mod1.to_csv("path to folder")
   #remove indexes cause they're annoying
   
 #additional ideas:
 #I want to do this with something like Beautifulsoup4 (-Shreya)
-  #pull what the genes have been implicated in the GWAS catalog - https://www.ebi.ac.uk/gwas/downloads
-    
+#pull what the genes have been implicated in the GWAS catalog - https://www.ebi.ac.uk/gwas/downloads
+#To do this we need to look at all the query genes and create a variable with a link to their url
+# query the website and return the html to the variable ‘page’
+#page = urllib2.urlopen(quote_page)
+# parse the html using beautiful soup and store in variable `soup`
+#soup = BeautifulSoup(page, ‘html.parser’)
+# Take out the <div> of name and get its value
+#name_box = soup.find(‘h1’, attrs={‘class’: ‘name’})
+#name = name_box.text.strip() # strip() is used to remove starting and trailing
+
 '''
 NOTE TO READER FROM ANGELA:
 We decided to query all genes in the .db and then subsequently parse because:
