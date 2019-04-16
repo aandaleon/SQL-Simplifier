@@ -7,6 +7,7 @@ This repository contains a Python wrapper for SQLite3 to take in parameters from
 * Linux
 * [Python 3.6.7](https://www.python.org/downloads/) with the libraries:
   * [argparse](https://docs.python.org/3/library/argparse.html) 1.1
+  * [csv](https://docs.python.org/3/library/csv.html) 1.0
   * [numpy](http://www.numpy.org/) 1.16.1
   * [os](https://docs.python.org/3/library/os.html) 3.6.7
   * [pandas](https://pandas.pydata.org/) 0.24.2
