@@ -90,12 +90,10 @@ When the program is run without any parameters or gene lists, it will query ever
 * [Design document](https://github.com/aandaleon/SQLite3-wrapper/wiki/Design-Document)
 * [Presentation 1](https://docs.google.com/presentation/d/1lDZIZd-aw6z8_7F-tAtBdKWFPR-5bLE_pI3pmGNPjFM/edit?usp=sharing)
 * [Applications note](https://docs.google.com/document/d/1zZdlgaizWUCQ0v088a9LqwBZrsxtPLGiHGKr7nPlDOQ/edit?usp=sharing)
+* [Final presentation](https://docs.google.com/presentation/d/19DFuks-hMrekXAK4OjyANLwLJQVzDdleuS0ILW1yA5k/edit#slide=id.g50c2a10715_0_3)
 
 ## Quick background and resources
 Our project queries information from database files used by the program [PrediXcan](https://github.com/hakyim/PrediXcan). PrediXcan predicts gene expression by aggregate precalculated weights based on an individual's genotype that are stored in database files. These weights are calculated in various tissues and cohorts, such as the [Genotype-Tissue Expression Project (GTEx)](https://gtexportal.org/home/documentationPage) and the [Multi-Ethnic Study of Atherosclerosis](https://github.com/WheelerLab/DivPop), and all public database files are available at [predictdb.org](predictdb.org). A general layout of database files and descriptions for all information stored is available [here](https://s3.amazonaws.com/predictdb2/contributed/MESA-2018-05-v2/MESAdb_2018-05-28_updated_README.txt). We give the users the ability to query information from these models without prior knowledge of SQL and in a simple command line format. For more detail on the context, goals, and milestones of the project, please consult the [design document](https://github.com/aandaleon/SQLite3-wrapper/wiki/Design-Document).
-
-Powerpoints summerizing project:
-https://docs.google.com/presentation/d/19DFuks-hMrekXAK4OjyANLwLJQVzDdleuS0ILW1yA5k/edit#slide=id.g50c2a10715_0_3
 
 ## Authors
 This program and documentation were created by BS and MS [Bioinformatics](https://www.luc.edu/bioinformatics/index.shtml) students Angela Andaleon, Carlee Bettler, and Sherya Wadhwa for Computational Biology (COMP 383/483) Spring 2019 with Dr. Catherine Putonti at Loyola University Chicago. The original project idea was proposed by Angela Andaleon, Peter Fiorica, Ryan Schubert, and Dr. Heather Wheeler for use by the [Wheeler Lab](https://hwheeler01.github.io/).
