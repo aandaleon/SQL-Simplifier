@@ -56,10 +56,11 @@ When the program is run without any parameters or gene lists, it will query ever
 | ISG15        | 0.154111838799616 | rs2477782  | -0.0644525079361206   |
 
 ## Program options
-* **Input files**
+* **Input/output files**
   * `--db`: path to .db file or folder path you want to query
   * `--genes`: file containing gene (Ensembl IDs) separated by line
   * `--genenames`: file containing gene names separated by line
+  * `--out_prefix`: output file prefix; will end in .csv
 
 * **Inclusion parameters**
   * `--db_col`: Output the column of .db file of origin.
