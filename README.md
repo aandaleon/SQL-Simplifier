@@ -38,7 +38,7 @@ When the program is run without any parameters or gene lists, it will query ever
 | gtex_v7_Whole_Blood_imputed_europeans_tw_0.5_signif.db | ENSG00000130203.5  | APOE     | 0.0135600336620361 | rs11673170  | -0.00232453795322572 |
 
 * Query all genes in a single .db file and their `genename`, `cv_R2_avg`, `n.snps.in.model`, and `pred.perf.R2`, outputting into `gene_info.csv`
-  * `python3 master.py --dbs example_data/AFA_imputed_10_peer_3_pcs_v2.db --cv_R2_avg --n.snps.in.model --pred.perf.R2 --out_prefix gene_info`
+  * `python3 master.py --dbs example_data/AFA_imputed_10_peer_3_pcs_v2.db --genename_col --cv_R2_avg --n.snps.in.model --pred.perf.R2 --out_prefix gene_info`
 
 | genename | n.snps.in.model | cv_R2_avg          | pred.perf.R2       |
 |----------|-----------------|--------------------|--------------------|
@@ -62,6 +62,9 @@ When the program is run without any parameters or gene lists, it will query ever
   * `--genenames`: file containing gene names separated by line
 
 * **Inclusion parameters**
+  * `--db_col`: Output the column of .db file of origin.
+  * `--gene_col`: Output the column of genes (Ensembl IDs).
+  * `--genename_col`: Output the column of gene names.
   * `--n.snps.in.model`: Output the number of SNPs within the cis window that have non-zero weights, as found by elastic net.
   * `--test_R2_avg`: Output the average coefficient of determination when predicting values of the hold out fold during nested cross validation.
   * `--cv_R2_avg`: Output the average coefficient of determination for each of the hold out folds when cross-validation was performed on the entire data set.
