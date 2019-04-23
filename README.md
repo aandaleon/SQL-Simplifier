@@ -20,6 +20,7 @@ Open a terminal session and enter: `git clone https://github.com/aandaleon/SQLit
 ## Input files
 ### Required
 * One database file or one folder containing database files
+  * This program is calibrated for GTEx V7 and MESA .dbs
 ### Optional
 * List of genes (Ensembl ids), one per row
 * List of gene names, one per row
