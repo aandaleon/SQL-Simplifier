@@ -50,7 +50,7 @@ parser.add_argument("--n_samples", action = "store_true", dest = "n_samples", de
 parser.add_argument("--population", action = "store_true", dest = "population", default = False, help = "Output the population studied.")
 parser.add_argument("--tissue", action = "store_true", dest = "tissue", default = False, help = "Output the tissue or MESA population from which RNA was sequenced.")
 
-#THRESHOLDS (may mess around with)
+#THRESHOLDS
 parser.add_argument("--test_R2_avg_thres", type = float, dest = "test_R2_avg_thres", default = 0, help = "Restrict the test_R2_avg to values above this threshold. Default = 0.")
 parser.add_argument("--cv_R2_avg_thres", type = float, dest = "cv_R2_avg_thres", default = 0, help = "Restrict the cv_R2_avg to values above this threshold. Default = 0.")
 parser.add_argument("--rho_avg_thres", type = float, dest = "rho_avg_thres", default = 0, help = "Restrict the rho_avg to values above this threshold. Default = 0.")
