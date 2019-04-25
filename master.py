@@ -103,10 +103,7 @@ if args.pred_perf_pval:
     extra_flags.append("pred.perf.pval")
 
 ###WEIGHTS
-weights_query = False #default to not query weights
 weights_flags = []
-if args.rsid or args.varID or args.ref_allele or args.eff_allele or args.weight:
-    weights_query = True #you will be querying the weights matrix
 if args.rsid:
     weights_flags.append("rsid")
 if args.varID:
