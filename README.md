@@ -15,7 +15,7 @@ This repository contains a Python wrapper for SQLite3 to take in parameters from
   * [sys](https://docs.python.org/3/library/sys.html) 3.6.7
 
 ## Downloading the project
-Open a terminal session and enter: `git clone https://github.com/aandaleon/SQLite3-wrapper.git`
+Open a terminal session and enter: `git clone https://github.com/aandaleon/SQL-Simplifier.git`
 
 ## Input files
 ### Required
