@@ -1,1 +1,0 @@
-This folder contains a "practice" example of a simple querying, parsing, and outputting to .csv using Python to give a baseline of these methods to group members withot experience. It includes base psuedocode by Angela Andaleon, attempted solutions by Carlee Bettler and Shreya Wadhwa, and a working solution by Angela Andaleon.
