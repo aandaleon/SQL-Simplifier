@@ -236,7 +236,7 @@ if rho_avg_thres > 0:
 if pred_perf_R2_thres > 0: 
     data_frame = data_frame.loc[data_frame['pred.perf.R2'] > pred_perf_R2_thres]
 if pred_perf_pval_thres < 1: 
-    data_frame = data_frame.loc[data_frame['pred.perf.pval'] > pred_perf_pval_thres]
+    data_frame = data_frame.loc[data_frame['pred.perf.pval'] < pred_perf_pval_thres]
 
 #picks out user specified flags from data frame
 if len(query_flags) > 0:
