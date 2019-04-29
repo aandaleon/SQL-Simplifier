@@ -9,10 +9,7 @@ import sqlite3
 import warnings
 warnings.simplefilter(action='ignore', category = FutureWarning) #pandas is picky about .loc
 
-########
-#ANGELA#
-########
-
+#ARGUMENTS
 #if the python script is run without any flags, just output genenames, cv_R2_avg, rsid, and weights (most common things we use)
 parser = argparse.ArgumentParser()
 
@@ -160,10 +157,7 @@ rho_avg_thres = args.rho_avg_thres
 pred_perf_R2_thres = args.pred_perf_R2_thres
 pred_perf_pval_thres = args.pred_perf_pval_thres
 
-########
-#CARLEE#
-########
-
+#QUERYING
 data = [] #List of lists .db files info to output for further pandas filtering and parsing
 rsid = None
 varID = None
@@ -228,10 +222,7 @@ for db in dbs:
     conn.close()
 print("Completed querying. Parsing SQL output.")
 
-########        
-#SHREYA#
-########
-
+#FILTERING
 data_frame = pd.DataFrame(data) #make list of lists into dataframe
 data_frame.columns = ["db", "gene", "genename", "n_samples", "population", "tissue", "n.snps.in.model", "test_R2_avg", "cv_R2_avg", "rho_avg", "rho_zscore", "pred.perf.R2", "pred.perf.pval", "rsid", "varID", "ref_allele", "eff_allele", "weight"] #give column names so user knows what they're looking at
 
