@@ -248,12 +248,3 @@ data_frame = data_frame.drop_duplicates() #remove duplicate rows
 #print to csv
 data_frame.to_csv(args.out_prefix + ".csv", na_rep = "NA", index = False, quoting = csv.QUOTE_NONE) 
 print("Completed running SQL Simplifier. Have a nice day :).")  
-
-'''
-NOTE TO READER FROM ANGELA:
-We decided to query all genes in the .db and then subsequently parse because:
-1. The Wheeler Lab machine has so much memory size isn't an issue
-2. Carlee seemed more comfortable with hardcoding than working with shifting variables
-3. It's easier to have two people work on stuff if the stuff remains the same instead of variable
-4. I'm more comfortable in Pandas than SQL
-'''
